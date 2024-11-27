@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 
 import cn.hutool.core.io.resource.ClassPathResource;
 import cn.hutool.http.HttpRequest;
+import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,27 +23,24 @@ public class OpenNeuroSdk {
     private String apiPath = "https://openneuro.org/crn/graphql";
 
     public List<OpenNeuroDataset> list(int page, int size) throws IOException {
-        ClassPathResource resource = new ClassPathResource("./collector/openneuro/graphql-list-query.json");
-        String queryString = resource.readStr(StandardCharsets.UTF_8);
-        String response = query(queryString);
-        log.info(response);
+        Operator op = new OpenNeuroSdk().getOperator();
+        List<Entry> list = op.list("");
+        if (!list.isEmpty()) {
+            list.forEach(item -> {
+                OpenNeuroDataset dataset = new OpenNeuroDataset();
+                dataset.setAccessionNumber(item.path);
+            });
+        }
         return null;
     }
 
     public OpenNeuroDataset get(String datasetId) throws IOException {
-        ClassPathResource resource = new ClassPathResource("./collector/openneuro/graphql-get-query.json");
-        String queryString = resource.readStr(StandardCharsets.UTF_8);
-        queryString = queryString.replace("DATASET_ACCESSION_NUMBER", datasetId);
-        String response = query(queryString);
-        log.info(response);
+        Operator op = new OpenNeuroSdk().getOperator();
+        byte[] desc = op.read(datasetId + "/dataset_description.json");
+        JSONObject bidsDescription = JSONUtil.parseObj(desc);
+        log.info(bidsDescription.getStr("Name"));
         OpenNeuroDataset dataset = new OpenNeuroDataset();
         return dataset;
-    }
-
-    private String query(String query) throws IOException {
-        return HttpRequest.post(apiPath).header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE).body(query)
-                .execute().body();
-
     }
 
     private Operator getOperator() {
@@ -57,12 +55,7 @@ public class OpenNeuroSdk {
     }
 
     public static void main(String[] args) throws IOException {
-        Operator op = new OpenNeuroSdk().getOperator();
-        List<Entry> list = op.list("ds005619/");
-        if (!list.isEmpty()) {
-            list.forEach(item -> {
-                System.out.println(item);
-            });
-        }
+        OpenNeuroSdk sdk = new OpenNeuroSdk();
+        sdk.get("ds005619");
     }
 }
