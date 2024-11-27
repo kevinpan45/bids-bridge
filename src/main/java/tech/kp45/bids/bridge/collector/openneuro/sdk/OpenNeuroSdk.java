@@ -2,6 +2,7 @@ package tech.kp45.bids.bridge.collector.openneuro.sdk;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,26 +21,29 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class OpenNeuroSdk {
-    private String apiPath = "https://openneuro.org/crn/graphql";
 
-    public List<OpenNeuroDataset> list(int page, int size) throws IOException {
+    public List<OpenNeuroDataset> list(int page, int size) {
+        List<OpenNeuroDataset> datasets = new ArrayList<>();
         Operator op = new OpenNeuroSdk().getOperator();
         List<Entry> list = op.list("");
         if (!list.isEmpty()) {
             list.forEach(item -> {
                 OpenNeuroDataset dataset = new OpenNeuroDataset();
                 dataset.setAccessionNumber(item.path);
+                datasets.add(dataset);
             });
         }
-        return null;
+        return datasets;
     }
 
-    public OpenNeuroDataset get(String datasetId) throws IOException {
+    public OpenNeuroDataset get(String datasetId) {
         Operator op = new OpenNeuroSdk().getOperator();
         byte[] desc = op.read(datasetId + "/dataset_description.json");
         JSONObject bidsDescription = JSONUtil.parseObj(desc);
         log.info(bidsDescription.getStr("Name"));
         OpenNeuroDataset dataset = new OpenNeuroDataset();
+        dataset.setName(bidsDescription.getStr("Name"));
+        dataset.setAccessionNumber(datasetId);
         return dataset;
     }
 
@@ -52,10 +56,5 @@ public class OpenNeuroSdk {
         conf.put("allow_anonymous", "true");
         Operator op = Operator.of("s3", conf);
         return op;
-    }
-
-    public static void main(String[] args) throws IOException {
-        OpenNeuroSdk sdk = new OpenNeuroSdk();
-        sdk.get("ds005619");
     }
 }
