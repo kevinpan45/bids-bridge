@@ -1,3 +1,0 @@
-{
-    "query": "query { dataset(id: \"DATASET_ACCESSION_NUMBER\") { id name } }"
-}
