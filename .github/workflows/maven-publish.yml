@@ -7,10 +7,6 @@ on:
   release:
     types: [created]
   workflow_dispatch: 
-    inputs:
-      release-version:
-        required: true
-        default: 'manual-build'
         
 
 jobs:
