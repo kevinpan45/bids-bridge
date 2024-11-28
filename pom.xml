@@ -13,7 +13,7 @@
 	<artifactId>bids-bridge</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>bridge</name>
-	<description>Demo project for Spring Boot</description>
+	<description>BIDS Bridge API Server</description>
 	<url />
 	<licenses>
 		<license />
