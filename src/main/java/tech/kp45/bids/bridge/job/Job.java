@@ -13,7 +13,7 @@ public class Job {
     private String createdBy;
     private int pipelineId;
     private int datasetId;
-    private int fileFilterId;
+    private int filterId;
     private int artifactId;
     private Date createdAt;
     private Date updatedAt;
