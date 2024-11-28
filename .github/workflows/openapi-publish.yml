@@ -3,7 +3,7 @@ name: Publish OpenAPI Stub SDK to Packages
 on:
   push:
     branches:
-      - main
+      - "*"
     tags:
       - "*.*.*"
   workflow_dispatch:
