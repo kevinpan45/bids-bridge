@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class Workflow {
-    private int id;
+    private Integer id;
     private String dag;
 }

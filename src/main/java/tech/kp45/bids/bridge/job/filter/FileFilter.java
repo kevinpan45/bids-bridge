@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 public class FileFilter {
-    private int id;
-    private int jobId;
+    private Integer id;
+    private Integer jobId;
     private List<String> fileRegexes;
 }

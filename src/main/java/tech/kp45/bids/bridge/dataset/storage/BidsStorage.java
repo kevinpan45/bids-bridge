@@ -4,8 +4,8 @@ import lombok.Data;
 
 @Data
 public class BidsStorage {
-    private int id;
-    private int datasetId;
+    private Integer id;
+    private Integer datasetId;
     private String path;
     private String packingPath;
 }

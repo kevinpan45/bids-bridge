@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 public class Dataset {
-    private int id;
+    private Integer id;
     private String name;
     private String version;
     private Date createdAt;

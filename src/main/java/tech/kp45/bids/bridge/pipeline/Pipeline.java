@@ -6,10 +6,10 @@ import lombok.Data;
 
 @Data
 public class Pipeline {
-    private int id;
+    private Integer id;
     private String name;
     private String version;
-    private int workflowId;
+    private Integer workflowId;
     private Date createdAt;
     private Date updatedAt;
     private boolean deleted;

@@ -6,15 +6,15 @@ import lombok.Data;
 
 @Data
 public class Job {
-    private int id;
+    private Integer id;
     private String name;
     private String group;
     private String status;
     private String createdBy;
-    private int pipelineId;
-    private int datasetId;
-    private int filterId;
-    private int artifactId;
+    private Integer pipelineId;
+    private Integer datasetId;
+    private Integer filterId;
+    private Integer artifactId;
     private Date createdAt;
     private Date updatedAt;
     private boolean deleted;

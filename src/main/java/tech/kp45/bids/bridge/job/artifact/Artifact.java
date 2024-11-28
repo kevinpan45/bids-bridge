@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class Artifact {
-    private int id;
-    private int jobId;
+    private Integer id;
+    private Integer jobId;
 }
