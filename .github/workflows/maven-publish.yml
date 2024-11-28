@@ -1,22 +1,22 @@
-name: Publish package to GitHub Packages
+name: Publish Jar to GitHub Packages
 on:
   push:
-    tags: 
-      - v*
+    tags:
+      - "*.*.*"
   workflow_dispatch:
 jobs:
   publish:
-    runs-on: ubuntu-latest 
-    permissions: 
+    runs-on: ubuntu-latest
+    permissions:
       contents: read
-      packages: write 
+      packages: write
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
-          java-version: '21'
-          cache: 'maven'
+          distribution: "temurin"
+          java-version: "21"
+          cache: "maven"
       - name: Publish package
         run: mvn --batch-mode deploy
         env:

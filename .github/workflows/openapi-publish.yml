@@ -1,0 +1,35 @@
+name: Publish OpenAPI Stub SDK to Packages
+
+on:
+  push:
+    tags:
+      - "*.*.*"
+  workflow_dispatch:
+
+jobs:
+  generate_java_server_stub:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/kevinpan45/openapi-generator:latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Generate code
+        run: |
+          openapi-generator-cli generate -i docs/openapi/api.yml -g spring -o server-stub/ \
+            --additional-properties=apiPackage=tech.kp45.bids.bridge.stub.server.api \
+            --additional-properties=modelPackage=tech.kp45.bids.bridge.stub.server.model \
+            --additional-properties=groupId=tech.kp45.bids.bridge.openapi.stub.server \
+            --additional-properties=artifactId=bids-bridge-openapi-server-stub \
+            --additional-properties=artifactVersion=latest \
+            --additional-properties=library=spring-cloud \
+            --additional-properties=interfaceOnly=true \
+            --additional-properties=dateLibrary=legacy \
+            --additional-properties=useSpringBoot3=true
+
+      - name: Build Package
+        run: |
+          cd server-stub
+          mvn package
