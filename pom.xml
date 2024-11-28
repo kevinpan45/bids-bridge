@@ -135,7 +135,7 @@
 		<repository>
 			<id>github</id>
 			<name>GitHub Packages</name>
-			<url>https://maven.pkg.github.com/kevinpan45/bids-bridge</url>
+			<url>https://maven.pkg.github.com/kp45-tech/bids-bridge</url>
 		</repository>
 	</distributionManagement>
 </project>
