@@ -2,6 +2,8 @@ name: Publish OpenAPI Stub SDK to Packages
 
 on:
   pull_request:
+    branches:
+      - refactor/init-spring-project
   push:
     tags:
       - "*.*.*"
