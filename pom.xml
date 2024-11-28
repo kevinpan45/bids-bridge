@@ -10,7 +10,7 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>tech.kp45.bids</groupId>
-	<artifactId>bridge</artifactId>
+	<artifactId>bids-bridge</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>bridge</name>
 	<description>Demo project for Spring Boot</description>
