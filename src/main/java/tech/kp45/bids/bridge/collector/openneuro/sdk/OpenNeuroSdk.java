@@ -1,20 +1,13 @@
 package tech.kp45.bids.bridge.collector.openneuro.sdk;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.opendal.Entry;
-import org.apache.opendal.Metadata;
 import org.apache.opendal.Operator;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 
-import cn.hutool.core.io.resource.ClassPathResource;
-import cn.hutool.http.HttpRequest;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
