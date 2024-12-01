@@ -5,7 +5,10 @@ import lombok.Data;
 @Data
 public class BidsStorage {
     private Integer id;
-    private Integer datasetId;
-    private String path;
-    private String packingPath;
+    private String endpoint;
+    private String accessKey;
+    private String secretKey;
+    private String bucket;
+    private String prefix;
+    private String region;
 }
