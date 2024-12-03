@@ -72,6 +72,7 @@ public class BidsStorageService {
             log.info(path);
         });
         BidsDescription description = service.getDatasetDescription(paths.get(0));
-        log.info(description.getContent());
+        log.info(description.getContentJson().getStr("Name"));
+        log.info(description.toBidsDataset().getName());
     }
 }
