@@ -78,18 +78,28 @@ public class BidsStorageService {
      * @param files container to store the file paths
      * @param path  the path to list files
      */
-    public void listFiles(List<String> files, String path) {
-        if (isBids(path)) {
-            
+    public List<String> list(String path) {
+        if (!isBids(path)) {
+            throw new BasicRuntimeException("The path is not a BIDS dataset");
         }
+        List<String> paths = new ArrayList<>();
+        Operator op = getOperator();
+        List<Entry> obs = op.list(path);
+        obs.forEach(ob -> {
+            paths.add(ob.path);
+        });
+        return paths;
+    }
+
+    public void scan(String path, List<String> filesContainer) {
         Operator op = getOperator();
         List<Entry> obs = op.list(path);
         if (!obs.isEmpty()) {
             for (Entry ob : obs) {
                 if (ob.metadata.isDir()) {
-                    listFiles(files, ob.path);
+                    scan(ob.path, filesContainer);
                 } else {
-                    files.add(ob.path);
+                    filesContainer.add(ob.path);
                 }
             }
         }
@@ -97,8 +107,14 @@ public class BidsStorageService {
 
     public static void main(String[] args) {
         List<String> files = new ArrayList<>();
-        new BidsStorageService().listFiles(files, "ds005616/");
+        String testPath = "ds005616/";
+        BidsStorageService service = new BidsStorageService();
+        service.scan(testPath, files);
         files.forEach(file -> {
+            System.out.println(file);
+        });
+        
+        service.list(testPath).forEach(file -> {
             System.out.println(file);
         });
     }
