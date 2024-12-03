@@ -38,17 +38,18 @@ public class BidsStorageService {
         }
     }
 
-    public List<String> listPath() {
+    public List<String> listBidsPath() {
         List<String> paths = new ArrayList<>();
-        Operator op = getOperator();
-        List<Entry> obs = op.list("/");
-        if (!obs.isEmpty()) {
-            for (Entry ob : obs) {
-                if (ob.metadata.isDir()) {
+        getOperator().list("/").forEach(ob -> {
+            if (ob.metadata.isDir()) {
+                if (isBids(ob.path)) {
                     paths.add(ob.path);
+                } else {
+                    log.warn("The path {} is not a BIDS dataset", ob.path);
                 }
             }
-        }
+        });
+
         return paths;
     }
 
@@ -73,49 +74,101 @@ public class BidsStorageService {
     }
 
     /**
-     * List all files in the path
+     * List file and dir in the current path
      * 
      * @param files container to store the file paths
      * @param path  the path to list files
      */
-    public List<String> list(String path) {
+    public List<String> listPath(String path) {
         if (!isBids(path)) {
             throw new BasicRuntimeException("The path is not a BIDS dataset");
         }
         List<String> paths = new ArrayList<>();
-        Operator op = getOperator();
-        List<Entry> obs = op.list(path);
-        obs.forEach(ob -> {
+        getOperator().list(path).forEach(ob -> {
             paths.add(ob.path);
         });
         return paths;
     }
 
-    public void scan(String path, List<String> filesContainer) {
-        Operator op = getOperator();
-        List<Entry> obs = op.list(path);
-        if (!obs.isEmpty()) {
-            for (Entry ob : obs) {
-                if (ob.metadata.isDir()) {
-                    scan(ob.path, filesContainer);
-                } else {
-                    filesContainer.add(ob.path);
-                }
+    /**
+     * Recursively scan the path and store the file paths in the filesContainer
+     * 
+     * @param path
+     * @param filesContainer
+     */
+    public void scanFiles(String path, List<String> filesContainer) {
+        getOperator().list(path).forEach(ob -> {
+            if (ob.metadata.isDir()) {
+                scanFiles(ob.path, filesContainer);
+            } else {
+                filesContainer.add(ob.path);
             }
+        });
+    }
+
+    public List<String> listSub(String path) {
+        List<String> subs = new ArrayList<>();
+        getOperator().list(path).forEach(ob -> {
+            if (ob.metadata.isDir() && getCurrentInPath(ob.path).startsWith("sub-")) {
+                subs.add(ob.path);
+            }
+        });
+        return subs;
+    }
+
+    public boolean derived(String path) {
+        boolean derived = false;
+        List<Entry> obs = getOperator().list(path);
+        for (Entry ob : obs) {
+            String pathName = getCurrentInPath(ob.path);
+            if (ob.metadata.isDir() && "derivatives".equals(pathName)) {
+                derived = true;
+                break;
+            }
+        }
+        return derived;
+    }
+
+    public List<String> listDerivatives(String path) {
+        List<String> derivatives = new ArrayList<>();
+        getOperator().list(path + "/derivatives/").forEach(ob -> {
+            if (ob.metadata.isDir()) {
+                derivatives.add(ob.path);
+            }
+        });
+        return derivatives;
+    }
+
+    /**
+     * sample ds005616/derivatives -> derivatives
+     * ds005616/sub-01 -> sub-01
+     * ds005616/dataset_description.json -> dataset_description.json
+     * 
+     * @param path
+     * @return the current file or dir name in path
+     */
+    private String getCurrentInPath(String path) {
+        String[] pathArr = path.split("/");
+        if (path.endsWith("/")) {
+            return pathArr[pathArr.length - 1];
+        } else {
+            return pathArr[pathArr.length - 2];
         }
     }
 
     public static void main(String[] args) {
-        List<String> files = new ArrayList<>();
         String testPath = "ds005616/";
         BidsStorageService service = new BidsStorageService();
-        service.scan(testPath, files);
-        files.forEach(file -> {
-            System.out.println(file);
+
+        service.listSub(testPath).forEach(subPath -> {
+            System.out.println(service.getCurrentInPath(subPath));
         });
-        
-        service.list(testPath).forEach(file -> {
-            System.out.println(file);
+
+        service.listDerivatives(testPath).forEach(derivative -> {
+            System.out.println(derivative);
         });
+
+        boolean derived = service.derived(testPath);
+        System.out.println("Derived: " + derived);
     }
 }
