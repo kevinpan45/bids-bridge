@@ -1,15 +1,19 @@
 package tech.kp45.bids.bridge.dataset.storage;
 
+import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.opendal.Entry;
 import org.apache.opendal.Operator;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import cn.hutool.core.io.FileUtil;
 import lombok.extern.slf4j.Slf4j;
 import tech.kp45.bids.bridge.exception.BasicRuntimeException;
 
@@ -137,6 +141,26 @@ public class BidsStorageService {
             }
         });
         return derivatives;
+    }
+
+    public File getDescriptorFile(String path) {
+        BidsDescription bidsDescription = getBidsDescription(path);
+        String tmpFilePath = System.getProperty("java.io.tmpdir") + File.separator + UUID.randomUUID().toString()
+                + File.separator + path + bidsDescriptionFileName;
+        File file = new File(tmpFilePath);
+        FileUtil.writeString(bidsDescription.getContent(), file, StandardCharsets.UTF_8);
+        log.info("BIDS dataset description file is saved to {}", file.getAbsolutePath());
+        return file;
+    }
+
+    public File getParticipantFile(String path) {
+        String tmpFilePath = System.getProperty("java.io.tmpdir") + File.separator + UUID.randomUUID().toString()
+                + File.separator + path + "participants.tsv";
+        File file = new File(tmpFilePath);
+        byte[] bytes = getOperator().read(path + "participants.tsv");
+        FileUtil.writeBytes(bytes, file);
+        log.info("BIDS dataset participants file is saved to {}", file.getAbsolutePath());
+        return file;
     }
 
     /**
