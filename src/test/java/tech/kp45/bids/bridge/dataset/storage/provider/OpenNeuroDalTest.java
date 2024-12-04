@@ -1,4 +1,4 @@
-package tech.kp45.bids.bridge.dataset.storage;
+package tech.kp45.bids.bridge.dataset.storage.provider;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -13,61 +13,66 @@ import org.junit.jupiter.api.Test;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import tech.kp45.bids.bridge.dataset.storage.BidsDataset;
+import tech.kp45.bids.bridge.dataset.storage.BidsStorageService;
 
-public class BidsStorageServiceTest {
+public class OpenNeuroDalTest {
 
-    private String testPath = "ds005616/";
+    private String testPath = "ds005127/";
+    private String expectedName = "AMRI 16-N-0031 sleep1";
+
+    private OpenNeuroDal dal = new OpenNeuroDal();
 
     @Test
     void testDerived() {
-        boolean derived = new BidsStorageService().derived(testPath);
+        boolean derived = dal.derived(testPath);
         assertTrue(derived);
     }
 
     @Test
     void testInitialize() {
-        BidsDataset bidsDataset = new BidsStorageService().initialize(testPath);
-        assertTrue("whole-spine".equals(bidsDataset.getName()));
+        BidsDataset bidsDataset = dal.initialize(testPath);
+        assertTrue(expectedName.equals(bidsDataset.getName()));
     }
 
     @Test
     void testListDerivatives() {
-        List<String> derivatives = new BidsStorageService().listDerivatives(testPath);
+        List<String> derivatives = dal.listDerivatives(testPath);
         assertFalse(derivatives.isEmpty());
     }
 
     @Test
     void testListPath() {
-        List<String> paths = new BidsStorageService().listPath(testPath);
+        List<String> paths = dal.listPath(testPath);
         assertFalse(paths.isEmpty());
-        assertTrue(paths.contains(testPath + "dataset_description.json"));
+        assertTrue(paths.contains(testPath + BidsStorageService.BIDS_DESCRIPTION_FILE_NAME));
     }
 
     @Test
     void testListSub() {
-        List<String> subs = new BidsStorageService().listSub(testPath);
+        List<String> subs = dal.listSub(testPath);
         assertFalse(subs.isEmpty());
     }
 
     @Test
     void testScanFiles() {
         List<String> files = new ArrayList<>();
-        new BidsStorageService().scanFiles(testPath, files);
+        dal.scanFiles(testPath, files);
         assertFalse(files.isEmpty());
     }
 
     @Test
     void testGetDescriptorFile() {
-        File descriptorFile = new BidsStorageService().getDescriptorFile(testPath);
+        File descriptorFile = dal.getDescriptorFile(testPath);
         String content = FileUtil.readString(descriptorFile, StandardCharsets.UTF_8);
         assertTrue(JSONUtil.isTypeJSONObject(content));
         JSONObject jsonObject = JSONUtil.parseObj(content);
-        assertTrue("whole-spine".equals(jsonObject.getStr("Name")));
+        assertTrue(expectedName.equals(jsonObject.getStr("Name")));
     }
 
     @Test
     void testGetParticipantFile() {
-        File participantFile = new BidsStorageService().getParticipantFile(testPath);
+        File participantFile = dal.getParticipantFile(testPath);
         assertTrue(participantFile.exists());
     }
 }

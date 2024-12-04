@@ -3,15 +3,12 @@ package tech.kp45.bids.bridge.dataset.storage;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import org.apache.opendal.Entry;
 import org.apache.opendal.Operator;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import cn.hutool.core.io.FileUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -19,28 +16,11 @@ import tech.kp45.bids.bridge.exception.BasicRuntimeException;
 
 @Slf4j
 @Service
-public class BidsStorageService {
+public abstract class BidsStorageService {
 
-    private String bidsDescriptionFileName = "dataset_description.json";
+    public static final String BIDS_DESCRIPTION_FILE_NAME = "dataset_description.json";
 
-    private Operator getOperator() {
-        final Map<String, String> conf = new HashMap<>();
-        conf.put("endpoint", "http://192.168.31.124:9000");
-        conf.put("region", "us-east-1");
-        conf.put("bucket", "bids");
-        String accessKey = System.getenv("LOCAL_MINIO_ACCESS_KEY");
-        String secretKey = System.getenv("LOCAL_MINIO_SECRET_KEY");
-        if (StringUtils.hasText(secretKey) && StringUtils.hasText(secretKey)) {
-            conf.put("access_key_id", accessKey);
-            conf.put("secret_access_key", secretKey);
-
-            Operator op = Operator.of("s3", conf);
-            return op;
-        } else {
-            log.error("Access key or secret key is not set");
-            throw new BasicRuntimeException("Access key or secret key is not set");
-        }
-    }
+    public abstract Operator getOperator();
 
     public List<String> listBidsPath() {
         List<String> paths = new ArrayList<>();
@@ -59,7 +39,7 @@ public class BidsStorageService {
 
     private BidsDescription getBidsDescription(String path) {
         Operator op = getOperator();
-        byte[] contentBytes = op.read(path + bidsDescriptionFileName);
+        byte[] contentBytes = op.read(path + BIDS_DESCRIPTION_FILE_NAME);
         String content = new String(contentBytes);
         return new BidsDescription(content);
     }
@@ -103,6 +83,9 @@ public class BidsStorageService {
     public void scanFiles(String path, List<String> filesContainer) {
         getOperator().list(path).forEach(ob -> {
             if (ob.metadata.isDir()) {
+                if (log.isTraceEnabled()) {
+                    log.trace("Scanning the path {}", ob.path);
+                }
                 scanFiles(ob.path, filesContainer);
             } else {
                 filesContainer.add(ob.path);
@@ -117,6 +100,9 @@ public class BidsStorageService {
                 subs.add(ob.path);
             }
         });
+        if (log.isDebugEnabled()) {
+            log.debug("Get {} subjects in the path {}", subs.size(), path);
+        }
         return subs;
     }
 
@@ -140,13 +126,16 @@ public class BidsStorageService {
                 derivatives.add(ob.path);
             }
         });
+        if (log.isDebugEnabled()) {
+            log.debug("Get {} derivatives in the path {}", derivatives.size(), path);
+        }
         return derivatives;
     }
 
     public File getDescriptorFile(String path) {
         BidsDescription bidsDescription = getBidsDescription(path);
         String tmpFilePath = System.getProperty("java.io.tmpdir") + File.separator + UUID.randomUUID().toString()
-                + File.separator + path + bidsDescriptionFileName;
+                + File.separator + path + BIDS_DESCRIPTION_FILE_NAME;
         File file = new File(tmpFilePath);
         FileUtil.writeString(bidsDescription.getContent(), file, StandardCharsets.UTF_8);
         log.info("BIDS dataset description file is saved to {}", file.getAbsolutePath());
@@ -178,21 +167,5 @@ public class BidsStorageService {
         } else {
             return pathArr[pathArr.length - 2];
         }
-    }
-
-    public static void main(String[] args) {
-        String testPath = "ds005616/";
-        BidsStorageService service = new BidsStorageService();
-
-        service.listSub(testPath).forEach(subPath -> {
-            System.out.println(service.getCurrentInPath(subPath));
-        });
-
-        service.listDerivatives(testPath).forEach(derivative -> {
-            System.out.println(derivative);
-        });
-
-        boolean derived = service.derived(testPath);
-        System.out.println("Derived: " + derived);
     }
 }
