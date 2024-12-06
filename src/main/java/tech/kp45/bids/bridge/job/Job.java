@@ -15,11 +15,11 @@ import lombok.experimental.Accessors;
 public class Job {
     @TableId
     private Integer id;
-    @TableField("name")
+    @TableField("`name`")
     private String name;
-    @TableField("group")
+    @TableField("`group`")
     private String group;
-    @TableField("status")
+    @TableField("`status`")
     private String status = JobStatus.CREATED.name();
     @TableField("created_by")
     private String createdBy;
@@ -27,6 +27,7 @@ public class Job {
     private Integer pipelineId;
     @TableField("dataset_id")
     private Integer datasetId;
+    @TableField("filter_id")
     private Integer filterId;
     @TableField("engine_job_id")
     private String engineJobId;

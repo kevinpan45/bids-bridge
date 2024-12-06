@@ -15,7 +15,7 @@ import lombok.experimental.Accessors;
 public class Pipeline {
     @TableId
     private Integer id;
-    @TableField("name")
+    @TableField("`name`")
     private String name;
     @TableField("version")
     private String version;

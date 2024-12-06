@@ -20,7 +20,7 @@ import tech.kp45.bids.bridge.pipeline.PipelineService;
 
 @Slf4j
 @Service
-public abstract class JobService {
+public class JobService {
     @Autowired
     private PipelineService pipelineService;
     @Autowired
@@ -59,31 +59,69 @@ public abstract class JobService {
         return job;
     }
 
-    abstract Job create(Integer pipelineId, Integer datasetId, List<String> fileRegexes);
+    public Job create(Integer pipelineId, Integer datasetId, List<String> fileRegexes) {
+        throw new UnsupportedOperationException("Not implemented");
+    }
 
     public String schedule(Integer jobId) {
         Job job = jobMapper.selectById(jobId);
         String engineJobId = jobEngine.submit(job);
-        log.info("Job {} scheduled with engine job id {}", jobId, engineJobId);
 
         job.setEngineJobId(engineJobId);
         job.setStatus(JobStatus.RUNNING.name());
         jobMapper.updateById(job);
+        log.info("Job {} started", jobId);
 
         return engineJobId;
     }
 
-    public abstract String finished(Integer jobId);
+    public Job finished(Integer jobId) {
+        Job job = jobMapper.selectById(jobId);
+        job.setStatus(JobStatus.FINISHED.name());
+        jobMapper.updateById(job);
+        log.info("Job {} finished", jobId);
+        return job;
+    }
 
-    public abstract void manualStop(Integer jobId);
+    public void manualStop(Integer jobId) {
+        Job job = jobMapper.selectById(jobId);
+        jobEngine.stop(job.getEngineJobId());
 
-    public abstract void abnormalStop(Integer jobId);
+        job.setStatus(JobStatus.MANUAL_STOPPED.name());
+        jobMapper.updateById(job);
+        log.info("Job {} manually stopped", jobId);
+    }
 
-    abstract void delete(Integer jobId);
+    public void abnormalStop(Integer jobId) {
+        Job job = jobMapper.selectById(jobId);
+        job.setStatus(JobStatus.ABNORMAL_STOPPED.name());
+        jobMapper.updateById(job);
+        log.info("Job {} stopped abnormally", jobId);
+    }
+
+    public void delete(Integer jobId) {
+        Job job = jobMapper.selectById(jobId);
+        if (JobStatus.RUNNING.name().equals(job.getStatus())) {
+            // Asynchronously stop the running job in engine.
+            new Thread() {
+                @Override
+                public void run() {
+                    jobEngine.stop(job.getEngineJobId());
+                }
+            }.start();
+        }
+        job.setDeleted(true);
+        jobMapper.updateById(job);
+        log.info("Job {} deleted", jobId);
+    }
 
     public List<Job> getRunningJobs() {
         LambdaQueryWrapper<Job> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Job::getStatus, JobStatus.RUNNING.name());
         return jobMapper.selectList(queryWrapper);
+    }
+
+    public List<Job> list() {
+        return jobMapper.selectList(null);
     }
 }

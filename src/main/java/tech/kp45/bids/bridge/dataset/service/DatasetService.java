@@ -2,16 +2,33 @@ package tech.kp45.bids.bridge.dataset.service;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import tech.kp45.bids.bridge.dataset.Dataset;
+import tech.kp45.bids.bridge.dataset.dao.DatasetMapper;
 
-public interface DatasetService {
-    List<Dataset> listPage(int page, int size);
+@Service
+public class DatasetService {
+    @Autowired
+    private DatasetMapper datasetMapper;
 
-    Dataset get(Integer id);
+    public List<Dataset> list() {
+        return datasetMapper.selectList(null);
+    }
 
-    Dataset create(Dataset dataset);
+    public Dataset get(Integer id) {
+        return datasetMapper.selectById(id);
+    }
 
-    void delete(Integer id);
+    public Dataset create(Dataset dataset) {
+        datasetMapper.insert(dataset);
+        return dataset;
+    }
 
-    void update(Dataset dataset);
+    public void delete(Integer id) {
+        Dataset dataset = get(id);
+        dataset.setDeleted(true);
+        datasetMapper.updateById(dataset);
+    }
 }
