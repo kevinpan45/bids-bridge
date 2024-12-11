@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 import lombok.extern.slf4j.Slf4j;
 import tech.kp45.bids.bridge.dataset.Dataset;
 import tech.kp45.bids.bridge.dataset.service.DatasetService;
+import tech.kp45.bids.bridge.dataset.storage.BidsStorage;
+import tech.kp45.bids.bridge.dataset.storage.BidsStorageRegister;
 import tech.kp45.bids.bridge.job.Job;
 import tech.kp45.bids.bridge.job.service.JobService;
 import tech.kp45.bids.bridge.pipeline.Pipeline;
@@ -24,6 +26,8 @@ public class AppStartedEvent implements ApplicationListener<ApplicationReadyEven
     private DatasetService datasetService;
     @Autowired
     private JobService jobService;
+    @Autowired
+    private BidsStorageRegister bidsStorageRegister;
 
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
@@ -35,6 +39,15 @@ public class AppStartedEvent implements ApplicationListener<ApplicationReadyEven
 
         List<Job> jobs = jobService.list();
         log.info("Job count: {}", jobs.size());
+
+        List<BidsStorage> storages = bidsStorageRegister.getStorages();
+        if (storages != null) {
+            for (BidsStorage storage : storages) {
+                if (storage != null) {
+                    log.info("Storage: {}", storage.getName());
+                }
+            }
+        }
     }
 
 }

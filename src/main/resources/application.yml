@@ -16,3 +16,23 @@ management:
     web:
       exposure:
         include: "*"
+
+bids:
+  storages:
+    - id: 1
+      name: default
+      endpoint: http://localhost:9000
+      bucket: bids-bridge
+      region: us-east-1
+      access-key: ${LOCAL_MINIO_ACCESS_KEY}
+      secret-key: ${LOCAL_MINIO_SECRET_KEY}
+      prefix: 
+    - id: 2
+      name: openneuro
+      bucket: openneuro.org
+      region: us-east-1
+      prefix: 
+      externals:
+        - disable_config_load: true
+        - disable_ec2_metadata: true
+        - allow_anonymous: true
