@@ -25,7 +25,7 @@ spec:
           - "--verbose"
         volumeMounts:
           - name: rclone-openneuro
-            mountPath: /root/.rclone.conf
+            mountPath: /root/.config/rclone/
             readOnly: true
       volumes:
         - name: rclone-openneuro
