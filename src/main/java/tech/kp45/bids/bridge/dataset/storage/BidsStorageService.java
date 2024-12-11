@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 import cn.hutool.core.io.FileUtil;
 import lombok.extern.slf4j.Slf4j;
-import tech.kp45.bids.bridge.exception.BasicRuntimeException;
+import tech.kp45.bids.bridge.common.exception.BasicRuntimeException;
 
 @Slf4j
 @Service

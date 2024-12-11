@@ -16,10 +16,10 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
+import tech.kp45.bids.bridge.common.exception.BasicRuntimeException;
 import tech.kp45.bids.bridge.dataset.storage.BidsDataset;
 import tech.kp45.bids.bridge.dataset.storage.BidsStorage;
 import tech.kp45.bids.bridge.dataset.storage.BidsStorageService;
-import tech.kp45.bids.bridge.exception.BasicRuntimeException;
 
 @Slf4j
 public class MinioBidsStorageDalTest {
