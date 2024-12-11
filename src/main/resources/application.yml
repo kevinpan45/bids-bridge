@@ -21,6 +21,7 @@ bids:
   storages:
     - id: 1
       name: default
+      provider: MinioBidsStorageDal
       endpoint: http://localhost:9000
       bucket: bids-bridge
       region: us-east-1
@@ -29,6 +30,7 @@ bids:
       prefix: 
     - id: 2
       name: openneuro
+      provider: OpenNeuroDal
       bucket: openneuro.org
       region: us-east-1
       prefix: 

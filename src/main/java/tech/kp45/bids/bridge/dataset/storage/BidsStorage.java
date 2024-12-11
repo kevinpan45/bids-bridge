@@ -10,6 +10,7 @@ import lombok.experimental.Accessors;
 public class BidsStorage {
     private Integer id;
     private String name;
+    private String provider;
     private String endpoint;
     private String accessKey;
     private String secretKey;
