@@ -22,8 +22,8 @@ bids:
     - id: 1
       name: default
       provider: MinioBidsStorageDal
-      endpoint: http://localhost:9000
-      bucket: bids-bridge
+      endpoint: http://192.168.31.56:9000
+      bucket: bids
       region: us-east-1
       access-key: ${LOCAL_MINIO_ACCESS_KEY}
       secret-key: ${LOCAL_MINIO_SECRET_KEY}
