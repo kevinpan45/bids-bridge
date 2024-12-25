@@ -1,0 +1,51 @@
+openapi: "3.0.3"
+info:
+  title: BIDS Bridge OpenAPI
+  version: "1.0"
+servers:
+  - url: https://api.bids-bridge.saas.kp45.tech/v1
+
+security:
+  - bearerAuth: []
+
+paths:
+  /datasets:
+    get:
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Dataset"
+  /datasets/{id}:
+    get:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Dataset"
+components:
+  schemas:
+    Dataset:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+  securitySchemes:
+      bearerAuth:
+        type: http
+        scheme: bearer
+        bearerFormat: JWT

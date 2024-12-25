@@ -1,0 +1,33 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: openneuro-collector
+  namespace: bids-collector
+  generateName: openneuro-collector-
+spec:
+  entrypoint: rclone
+  arguments:
+    parameters:
+    - name: dataset
+      description: Accession number of the dataset
+  templates:
+    - name: rclone
+      inputs:
+        parameters:
+        - name: dataset
+      container:
+        image: rclone/rclone:latest
+        command: ["rclone"]
+        args:
+          - "sync"
+          - "s3:openneuro.org/{{workflow.parameters.dataset}}"
+          - "minio:bids/{{workflow.parameters.dataset}}"
+          - "--verbose"
+        volumeMounts:
+          - name: rclone-openneuro
+            mountPath: /root/.config/rclone/
+            readOnly: true
+      volumes:
+        - name: rclone-openneuro
+          configMap:
+            name: rclone-openneuro
