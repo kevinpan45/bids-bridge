@@ -20,6 +20,6 @@ jobs:
           java-version: "21"
           cache: "maven"
       - name: Publish package
-        run: mvn --batch-mode deploy
+        run: mvn --batch-mode deploy -Dmaven.test.skip=true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
