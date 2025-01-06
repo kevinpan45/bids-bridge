@@ -2,6 +2,8 @@ name: Publish Image to GitHub Packages
 
 on:
   push:
+    branches: 
+      - main
     tags:
       - "*.*.*"
   workflow_dispatch:
