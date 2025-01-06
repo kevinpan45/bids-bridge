@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
 import tech.kp45.bids.bridge.common.exception.BasicRuntimeException;
+import tech.kp45.bids.bridge.dataset.storage.BidsCheckMode;
 import tech.kp45.bids.bridge.dataset.storage.BidsStorage;
 import tech.kp45.bids.bridge.dataset.storage.BidsStorageRegister;
 import tech.kp45.bids.bridge.dataset.storage.provider.MinioBidsStorageDal;
@@ -45,7 +46,7 @@ public class BffApi {
         List<String> datasets = new ArrayList<>();
 
         MinioBidsStorageDal dal = new MinioBidsStorageDal(storage);
-        dal.listBidsPath().stream().forEach(dataset -> {
+        dal.listBidsPath(BidsCheckMode.BIDS_FOLDER_STRUCTURE).stream().forEach(dataset -> {
             datasets.add(dataset.replace("/", ""));
         });
 
