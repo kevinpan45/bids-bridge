@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.apache.opendal.Entry;
+import org.apache.opendal.OpenDALException;
 import org.apache.opendal.Operator;
 import org.springframework.stereotype.Service;
 
@@ -22,19 +23,49 @@ public abstract class BidsStorageService {
 
     public abstract Operator getOperator();
 
-    public List<String> listBidsPath() {
+    public abstract void scanBids(String path);
+
+    public List<String> listBidsPath(BidsCheckMode checkMode) {
         List<String> paths = new ArrayList<>();
         getOperator().list("/").forEach(ob -> {
+            boolean isBids = false;
             if (ob.metadata.isDir()) {
-                if (isBids(ob.path)) {
-                    paths.add(ob.path);
+                if (checkMode == BidsCheckMode.BIDS_DESCRIPTION_FILE) {
+                    isBids = isBids(ob.path);
                 } else {
-                    log.warn("The path {} is not a BIDS dataset", ob.path);
+                    isBids = fileExist(ob.path + BIDS_DESCRIPTION_FILE_NAME);
                 }
+            }
+
+            if (isBids) {
+                paths.add(ob.path);
+            } else {
+                log.warn("The path {} is not a BIDS dataset", ob.path);
             }
         });
 
         return paths;
+    }
+
+    public byte[] readFile(String path) {
+        return getOperator().read(path);
+    }
+
+    public boolean fileExist(String path) {
+        boolean exist = false;
+        try {
+            getOperator().stat(path);
+            exist = true;
+        } catch (OpenDALException e) {
+            if ("NotFound".equals(e.getCode().name())) {
+                if (log.isTraceEnabled()) {
+                    log.trace("The path {} does not have the BIDS description file", path);
+                }
+            } else {
+                throw new BasicRuntimeException("Failed to check the BIDS description file in the path " + path, e);
+            }
+        }
+        return exist;
     }
 
     private BidsDescription getBidsDescription(String path) {
@@ -160,7 +191,7 @@ public abstract class BidsStorageService {
      * @param path
      * @return the current file or dir name in path
      */
-    private String getCurrentInPath(String path) {
+    public static String getCurrentInPath(String path) {
         String[] pathArr = path.split("/");
         if (path.endsWith("/")) {
             return pathArr[pathArr.length - 1];

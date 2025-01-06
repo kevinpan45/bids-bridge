@@ -38,4 +38,10 @@ public class MinioBidsStorageDal extends BidsStorageService {
     public Operator getOperator() {
         return Operator.of("s3", conf);
     }
+
+    @Override
+    public void scanBids(String path) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'scanBids'");
+    }
 }

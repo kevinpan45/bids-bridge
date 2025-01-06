@@ -17,6 +17,7 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
 import tech.kp45.bids.bridge.common.exception.BasicRuntimeException;
+import tech.kp45.bids.bridge.dataset.storage.BidsCheckMode;
 import tech.kp45.bids.bridge.dataset.storage.BidsDataset;
 import tech.kp45.bids.bridge.dataset.storage.BidsStorage;
 import tech.kp45.bids.bridge.dataset.storage.BidsStorageService;
@@ -65,7 +66,7 @@ public class MinioBidsStorageDalTest {
 
     @Test
     void testListDataset() {
-        List<String> datasets = dal.listBidsPath();
+        List<String> datasets = dal.listBidsPath(BidsCheckMode.BIDS_FOLDER_STRUCTURE);
         assertFalse(datasets.isEmpty());
     }
 

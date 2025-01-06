@@ -4,3 +4,5 @@ target/
 .vscode/
 
 .env
+
+openneuro_scraper_env
