@@ -29,6 +29,7 @@ bids:
     openneuro:
       sync:
         cron: 0 0 0 * * MON
+        # cron: 0 0/1 * * * ?
   storages:
     - id: 1
       name: default

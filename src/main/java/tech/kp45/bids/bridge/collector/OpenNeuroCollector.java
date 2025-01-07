@@ -27,7 +27,8 @@ public class OpenNeuroCollector {
         boolean outOfDate = false;
         if (redisTemplate.hasKey(trackingKey)) {
             inCache = JSONUtil.parseObj(redisTemplate.opsForValue().get(trackingKey));
-            if (!latestVersion.equals(inCache.getJSONObject("node").getJSONObject("latestSnapshot").getStr("tag"))) {
+            String cachedVersion = inCache.getJSONObject("node").getJSONObject("latestSnapshot").getStr("tag");
+            if (!latestVersion.equals(cachedVersion)) {
                 outOfDate = true;
             }
         } else {
@@ -37,7 +38,7 @@ public class OpenNeuroCollector {
 
         if (outOfDate) {
             redisTemplate.opsForValue().set(trackingKey, inCache.toString());
-            log.info("Dataset {} is updated.", accessionNumber);
+            log.info("Dataset {} is updated to {}", accessionNumber, latestVersion);
         }
     }
 }
