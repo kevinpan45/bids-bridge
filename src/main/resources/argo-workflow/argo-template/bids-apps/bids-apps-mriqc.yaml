@@ -38,11 +38,12 @@ spec:
           - name: rclone-openneuro
             mountPath: /root/.config/rclone/
             readOnly: true
+          - name: shared-data
+            mountPath: /shared
       volumes:
         - name: rclone-openneuro
           configMap:
             name: rclone-openneuro
-        - name: shared-data
     - name: execute-pipeline
       container:
         image: nipreps/mriqc:24.0.2
