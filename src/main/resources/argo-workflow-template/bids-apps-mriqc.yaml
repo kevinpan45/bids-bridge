@@ -1,0 +1,50 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: bids-apps
+  namespace: pipeline
+  generateName: bids-apps-mriqc-
+spec:
+  entrypoint: execute-pipeline
+  arguments:
+    parameters:
+    - name: dataset
+  templates:
+    - name: load-bids
+      inputs:
+        parameters:
+        - name: dataset
+      container:
+        image: rclone/rclone:latest
+        command: ["rclone"]
+        args:
+          - "copy"
+          - "minio:bids/{{workflow.parameters.dataset}}"
+          - "./{{workflow.parameters.dataset}}"
+          - "--verbose"
+        volumeMounts:
+          - name: rclone-openneuro
+            mountPath: /root/.config/rclone/
+            readOnly: true
+      volumes:
+        - name: rclone-openneuro
+          configMap:
+            name: rclone-openneuro
+    - name: execute-pipeline
+      inputs:
+        parameters:
+        - name: dataset
+      container:
+        image: nipreps/mriqc:24.0.2
+        command: ["mriqc"]
+        args: 
+          - "./{{workflow.parameters.dataset}}"
+          - "./artifact"
+          - "participant"
+        resources:
+          requests:
+            cpu: "4"
+            memory: "8Gi"
+          limits:
+            cpu: "8"
+            memory: "16Gi"
