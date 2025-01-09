@@ -2,25 +2,37 @@ apiVersion: argoproj.io/v1alpha1
 kind: WorkflowTemplate
 metadata:
   name: bids-apps
-  namespace: pipeline
+  namespace: argo
   generateName: bids-apps-mriqc-
 spec:
-  entrypoint: execute-pipeline
-  arguments:
-    parameters:
-    - name: dataset
+  entrypoint: main
+  volumeClaimTemplates:
+  - metadata:
+      name: shared-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 5Gi
   templates:
+    - name: main
+      steps:
+        - - name: load-bids
+            template: load-bids
+            arguments:
+              parameters:
+              - name: dataset
+                value: "{{workflow.parameters.dataset}}"
+        - - name: execute-pipeline
+            template: execute-pipeline
     - name: load-bids
-      inputs:
-        parameters:
-        - name: dataset
       container:
         image: rclone/rclone:latest
         command: ["rclone"]
         args:
           - "copy"
           - "minio:bids/{{workflow.parameters.dataset}}"
-          - "./{{workflow.parameters.dataset}}"
+          - "/shared/dataset"
           - "--verbose"
         volumeMounts:
           - name: rclone-openneuro
@@ -30,16 +42,14 @@ spec:
         - name: rclone-openneuro
           configMap:
             name: rclone-openneuro
+        - name: shared-data
     - name: execute-pipeline
-      inputs:
-        parameters:
-        - name: dataset
       container:
         image: nipreps/mriqc:24.0.2
         command: ["mriqc"]
         args: 
-          - "./{{workflow.parameters.dataset}}"
-          - "./artifact"
+          - "/shared/dataset"
+          - "/shared/artifact"
           - "participant"
         resources:
           requests:
@@ -48,3 +58,6 @@ spec:
           limits:
             cpu: "8"
             memory: "16Gi"
+        volumeMounts:
+          - name: shared-data
+            mountPath: /shared

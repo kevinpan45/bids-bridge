@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rclone-config
+  namespace: argo
+data:
+  rclone.conf: |
+    [minio]
+    type = s3
+    provider = Minio
+    env_auth = false
+    access_key_id = <>
+    secret_access_key = <>
+    region =
+    endpoint = <>
+
+    [s3]
+    type = s3
+    provider = AWS
+    endpoint = https://s3.amazonaws.com
