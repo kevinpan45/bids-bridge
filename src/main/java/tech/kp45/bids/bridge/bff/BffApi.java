@@ -27,12 +27,24 @@ public class BffApi {
 
     @GetMapping("/api/bids/storages")
     public List<BidsStorage> listBidsStorage() {
-        return bidsStorageRegister.getStorages();
+        List<BidsStorage> storages = bidsStorageRegister.getStorages();
+        storages.stream().forEach(s -> {
+            if (s != null) {
+                s.setAccessKey(null);
+                s.setSecretKey(null);
+            }
+        });
+        return storages;
     }
 
     @GetMapping("/api/bids/storages/{id}")
     public BidsStorage getBidsStorage(@PathVariable Integer id) {
-        return find(id);
+        BidsStorage storage = find(id);
+        if (storage != null) {
+            storage.setAccessKey(null);
+            storage.setSecretKey(null);
+        }
+        return storage;
     }
 
     @GetMapping("/api/bids/storages/{id}/datasets")
