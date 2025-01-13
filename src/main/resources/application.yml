@@ -3,20 +3,20 @@ spring:
     name: bids-bridge
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/bids_bridge?useUnicode=true&characterEncoding=utf-8&useSSL=true&createDatabaseIfNotExist=true
-    username: root
-    password: ${MYSQL_ROOT_PASSWORD}
+    url: jdbc:mysql://${MYSQL_HOST}:3306/bids_bridge?useUnicode=true&characterEncoding=utf-8&useSSL=true&createDatabaseIfNotExist=true
+    username: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
   flyway:
     enabled: true
     locations: classpath:db/migration
     baseline-on-migrate: true
   data:
     redis:
-      host: localhost
-      port: 6379
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
   kafka:
     bootstrap-servers:
-    - localhost:9092
+      - ${KAFKA_SERVER}
 
 management:
   endpoints:
@@ -34,19 +34,9 @@ bids:
     - id: 1
       name: default
       provider: MinioBidsStorageDal
-      endpoint: http://192.168.31.56:9000
+      endpoint: ${MINIO_ENDPOINT}
       bucket: bids
       region: us-east-1
-      access-key: ${LOCAL_MINIO_ACCESS_KEY}
-      secret-key: ${LOCAL_MINIO_SECRET_KEY}
-      prefix: 
-    - id: 2
-      name: openneuro
-      provider: OpenNeuroDal
-      bucket: openneuro.org
-      region: us-east-1
-      prefix: 
-      externals:
-        - disable_config_load: true
-        - disable_ec2_metadata: true
-        - allow_anonymous: true
+      access-key: ${MINIO_ACCESS_KEY}
+      secret-key: ${MINIO_SECRET_KEY}
+      prefix:

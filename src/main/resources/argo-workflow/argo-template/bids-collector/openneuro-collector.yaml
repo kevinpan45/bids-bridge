@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: WorkflowTemplate
 metadata:
   name: openneuro-collector
-  namespace: bids-collector
+  namespace: argo
   generateName: openneuro-collector-
 spec:
   entrypoint: rclone
