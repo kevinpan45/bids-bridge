@@ -31,7 +31,7 @@ public class MinioBidsStorageDalTest {
     @BeforeEach
     public void setUp() {
         BidsStorage storage = new BidsStorage();
-        storage.setEndpoint("http://192.168.31.56:9000");
+        storage.setEndpoint("http://localhost:9000");
         storage.setRegion("us-east-1");
         storage.setBucket("bids");
         String accessKey = System.getenv("LOCAL_MINIO_ACCESS_KEY");
