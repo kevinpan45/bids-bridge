@@ -3,8 +3,11 @@ package tech.kp45.bids.bridge.bff;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +27,9 @@ public class BffApi {
 
     @Autowired
     private BidsStorageRegister bidsStorageRegister;
+
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
 
     @GetMapping("/api/bids/storages")
     public List<BidsStorage> listBidsStorage() {
@@ -73,9 +79,25 @@ public class BffApi {
             throw new BasicRuntimeException("Storage not found");
         }
 
-        MinioBidsStorageDal dal = new MinioBidsStorageDal(storage);
         List<String> files = new ArrayList<>();
-        dal.scanFiles(dataset + File.separator, files);
+        String bidsFilesKey = "bids:dataset:" + dataset + ":files:";
+        Set<String> fileKeys = redisTemplate.keys(bidsFilesKey + "*");
+        if (fileKeys.isEmpty()) {
+            MinioBidsStorageDal dal = new MinioBidsStorageDal(storage);
+            dal.scanFiles(dataset + File.separator, files);
+            log.info("Get {} files from dataset {}", files.size(), dataset);
+            files.stream().forEach(file -> {
+                String filename = StringUtils.getFilename(file);
+                String fileKey = bidsFilesKey + filename;
+                redisTemplate.opsForValue().set(fileKey, file);
+            });
+            log.info("Dataset {} files cached", dataset);
+        } else {
+            fileKeys.forEach(fileKey -> {
+                files.add(redisTemplate.opsForValue().get(fileKey));
+            });
+        }
+
         return files;
     }
 
