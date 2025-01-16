@@ -17,6 +17,13 @@ spring:
   kafka:
     bootstrap-servers:
       - ${KAFKA_SERVER}
+    producer:
+      # at least one replica has written the data to its log, if singletons broker set acks=1
+      acks: all
+      retries: 3
+    consumer:
+      fetch-min-size: 10
+      auto-offset-reset: latest
 
 management:
   endpoints:
