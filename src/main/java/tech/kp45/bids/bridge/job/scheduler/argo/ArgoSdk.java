@@ -1,7 +1,9 @@
 package tech.kp45.bids.bridge.job.scheduler.argo;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.util.StringUtils;
 
@@ -9,6 +11,7 @@ import cn.hutool.http.HttpRequest;
 import cn.hutool.http.Method;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
 import tech.kp45.bids.bridge.common.exception.BasicRuntimeException;
 
@@ -56,9 +59,29 @@ public class ArgoSdk {
         return workflowTemplates;
     }
 
-    public String submit(String workflow) {
-        // TODO 
-        return null;
+    public String submit(String workflowTemplate, Map<String, Object> parameters) {
+        String url = serverUrl + "/api/v1/workflows/" + namespace + "/submit";
+        JSONObject body = new JSONObject();
+        body.set("namespace", namespace);
+        body.set("resourceKind", "WorkflowTemplate");
+        body.set("resourceName", workflowTemplate);
+        JSONObject submitOptions = generateSubmitBody(parameters);
+        body.set("submitOptions", submitOptions);
+        String retBody = getClient(url, Method.POST).body(body.toString()).execute().body();
+        String workflowId = JSONUtil.parseObj(retBody).getJSONObject("metadata").getStr("name");
+        log.info("Workflow {} of template {} is submitted.", workflowId, workflowTemplate);
+        return workflowId;
+    }
+
+    private JSONObject generateSubmitBody(Map<String, Object> parameters) {
+        JSONObject submitOptions = new JSONObject();
+        JSONArray formatedParameters = new JSONArray();
+        parameters.entrySet().forEach(entry -> {
+            formatedParameters.add(entry.getKey() + "=" + entry.getValue());
+        });
+        submitOptions.set("parameters", formatedParameters);
+
+        return submitOptions;
     }
 
     private List<String> parseItemNames(String body) {
@@ -83,10 +106,15 @@ public class ArgoSdk {
     }
 
     public static void main(String[] args) {
-        ArgoSdk argoSdk = new ArgoSdk("https://localhost:2746", "bids-collector", "");
+        ArgoSdk argoSdk = new ArgoSdk("https://localhost:2746", "argo", "");
         boolean available = argoSdk.test();
         log.info(available ? "ArgoSdk is available" : "ArgoSdk is not available");
         log.info(argoSdk.listWorkflowTemplate().toString());
         log.info(argoSdk.listWorkflow().toString());
+        argoSdk.submit("openneuro-collector", new HashMap<>() {
+            {
+                put("dataset", "ds005625");
+            }
+        });
     }
 }
