@@ -25,6 +25,19 @@ public abstract class BidsStorageService {
 
     public abstract void scanBids(String path);
 
+    public boolean exist(String path) {
+        try {
+            getOperator().stat(path);
+            return true;
+        } catch (OpenDALException e) {
+            if ("NotFound".equals(e.getCode().name())) {
+                return false;
+            } else {
+                throw new BasicRuntimeException("Failed to check the path " + path, e);
+            }
+        }
+    }
+
     public List<String> listBidsPath(BidsCheckMode checkMode) {
         List<String> paths = new ArrayList<>();
         getOperator().list("/").forEach(ob -> {
