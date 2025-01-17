@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.opendal.Operator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,7 +65,7 @@ public class OpenNeuroDal extends BidsStorageService {
             dataset.setValid(true);
             datasets.add(dataset);
             redisTemplate.opsForValue().set(OpenNeuroCollector.BIDS_DATASET_CACHE_PREFIX + dataset.getUid(),
-                    JSONUtil.toJsonStr(dataset));
+                    JSONUtil.toJsonStr(dataset), 1, TimeUnit.DAYS);
         }
         return datasets;
     }

@@ -1,5 +1,7 @@
 package tech.kp45.bids.bridge.collector;
 
+import java.util.concurrent.TimeUnit;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -39,7 +41,7 @@ public class OpenNeuroCollector {
         }
 
         if (outOfDate) {
-            redisTemplate.opsForValue().set(trackingKey, inCache.toString());
+            redisTemplate.opsForValue().set(trackingKey, inCache.toString(), 1, TimeUnit.DAYS);
             log.info("Dataset {} is updated to {}", dataset.getUid(), dataset.getVersion());
         }
     }
