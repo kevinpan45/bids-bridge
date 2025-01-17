@@ -18,6 +18,7 @@ public class OpenNeuroCollector {
     public static final String BIDS_DATASET_SYNC_TOPIC = "bids-collection-dataset-openneuro";
     private static final String BIDS_DATASET_TRACKING_PREFIX = "bids:dataset:openneuro:tracking:";
     public static final String BIDS_DATASET_CACHE_PREFIX = "bids:openneuro:datasets:";
+    public static final String BIDS_OPENNEURO_DATASET_ARCHTYPE_PATH = "openneuro/latest.txt";
 
     @Autowired
     private RedisTemplate<String, String> redisTemplate;

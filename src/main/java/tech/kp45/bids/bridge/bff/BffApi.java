@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
+import tech.kp45.bids.bridge.collector.OpenNeuroCollector;
 import tech.kp45.bids.bridge.common.exception.BasicRuntimeException;
 import tech.kp45.bids.bridge.dataset.storage.BidsCheckMode;
 import tech.kp45.bids.bridge.dataset.storage.BidsDataset;
@@ -138,7 +139,7 @@ public class BffApi {
         Set<String> keys = redisTemplate.keys("bids:openneuro:datasets:*");
         List<BidsDataset> datasets = new ArrayList<>();
         if (keys.isEmpty()) {
-            datasets = openNeuroDal.load("openneuro/latest.txt");
+            datasets = openNeuroDal.load(OpenNeuroCollector.BIDS_OPENNEURO_DATASET_ARCHTYPE_PATH);
             log.info("Load {} datasets from local storage", datasets.size());
         } else {
             for (String key : keys) {

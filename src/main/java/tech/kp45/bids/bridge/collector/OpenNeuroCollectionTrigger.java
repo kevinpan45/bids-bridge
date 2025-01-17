@@ -34,7 +34,7 @@ public class OpenNeuroCollectionTrigger {
             acquired = redisTemplate.opsForValue().setIfAbsent(OPENNEURO_SYNC_TASK_LOCK, "locked", 30,
                     TimeUnit.SECONDS);
             if (acquired) {
-                openNeuroDal.scanBids("openneuro/latest.txt");
+                openNeuroDal.scanBids(OpenNeuroCollector.BIDS_OPENNEURO_DATASET_ARCHTYPE_PATH);
             }
         } finally {
             if (acquired) {
