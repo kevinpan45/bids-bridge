@@ -20,6 +20,7 @@ public class BidsDataset {
     private String dataType;
     private String version;
     private String bidsVersion;
+    private int participants;
     /**
      * Valid by BIDS Validator or other validation program
      */

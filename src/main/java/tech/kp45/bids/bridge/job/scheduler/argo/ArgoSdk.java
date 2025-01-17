@@ -1,7 +1,6 @@
 package tech.kp45.bids.bridge.job.scheduler.argo;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +20,10 @@ public class ArgoSdk {
     private String serverUrl;
     private String namespace;
     private String token;
+
+    public ArgoSdk(ArgoProperties properties) {
+        this(properties.getServerUrl(), properties.getNamespace(), properties.getToken());
+    }
 
     public ArgoSdk(String serverUrl, String namespace, String token) {
         if (!StringUtils.hasText(serverUrl) || !StringUtils.hasText(namespace)) {
@@ -60,6 +63,9 @@ public class ArgoSdk {
     }
 
     public String submit(String workflowTemplate, Map<String, Object> parameters) {
+        if (!deployed(workflowTemplate)) {
+            throw new BasicRuntimeException("Workflow template " + workflowTemplate + " is not deployed.");
+        }
         String url = serverUrl + "/api/v1/workflows/" + namespace + "/submit";
         JSONObject body = new JSONObject();
         body.set("namespace", namespace);
@@ -71,6 +77,10 @@ public class ArgoSdk {
         String workflowId = JSONUtil.parseObj(retBody).getJSONObject("metadata").getStr("name");
         log.info("Workflow {} of template {} is submitted.", workflowId, workflowTemplate);
         return workflowId;
+    }
+
+    private boolean deployed(String workflowTemplate) {
+        return listWorkflowTemplate().contains(workflowTemplate);
     }
 
     private JSONObject generateSubmitBody(Map<String, Object> parameters) {
@@ -103,18 +113,5 @@ public class ArgoSdk {
             request.bearerAuth(token);
         }
         return request;
-    }
-
-    public static void main(String[] args) {
-        ArgoSdk argoSdk = new ArgoSdk("https://localhost:2746", "argo", "");
-        boolean available = argoSdk.test();
-        log.info(available ? "ArgoSdk is available" : "ArgoSdk is not available");
-        log.info(argoSdk.listWorkflowTemplate().toString());
-        log.info(argoSdk.listWorkflow().toString());
-        argoSdk.submit("openneuro-collector", new HashMap<>() {
-            {
-                put("dataset", "ds005625");
-            }
-        });
     }
 }

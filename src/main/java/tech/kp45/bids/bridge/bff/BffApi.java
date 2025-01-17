@@ -3,6 +3,7 @@ package tech.kp45.bids.bridge.bff;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,14 +12,20 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
 import tech.kp45.bids.bridge.common.exception.BasicRuntimeException;
 import tech.kp45.bids.bridge.dataset.storage.BidsCheckMode;
+import tech.kp45.bids.bridge.dataset.storage.BidsDataset;
 import tech.kp45.bids.bridge.dataset.storage.BidsStorage;
 import tech.kp45.bids.bridge.dataset.storage.BidsStorageRegister;
 import tech.kp45.bids.bridge.dataset.storage.provider.MinioBidsStorageDal;
+import tech.kp45.bids.bridge.dataset.storage.provider.OpenNeuroDal;
+import tech.kp45.bids.bridge.job.scheduler.argo.ArgoProperties;
+import tech.kp45.bids.bridge.job.scheduler.argo.ArgoSdk;
 
 @Slf4j
 @RestController
@@ -30,6 +37,9 @@ public class BffApi {
 
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
+
+    @Autowired
+    private OpenNeuroDal openNeuroDal;
 
     @GetMapping("/api/bids/storages")
     public List<BidsStorage> listBidsStorage() {
@@ -103,5 +113,41 @@ public class BffApi {
 
     private BidsStorage find(Integer id) {
         return bidsStorageRegister.getStorages().stream().filter(s -> s.getId().equals(id)).findFirst().orElse(null);
+    }
+
+    @Autowired
+    private ArgoProperties argoProperties;
+
+    @PostMapping("/api/bids/openneuro/{dataset}/collections")
+    public void collectOpenNeuroDataset(@PathVariable String dataset) {
+        if (!StringUtils.hasText(dataset)) {
+            throw new BasicRuntimeException("Dataset cannot be blank");
+        }
+
+        boolean exist = openNeuroDal.exist(dataset + "/");
+        if (exist) {
+            ArgoSdk argoSdk = new ArgoSdk(argoProperties);
+            argoSdk.submit("openneuro-collector", Map.of("dataset", dataset));
+        } else {
+            throw new BasicRuntimeException("Dataset not found");
+        }
+    }
+
+    @GetMapping("/api/bids/openneuro/datasets")
+    public List<BidsDataset> listOpenNeuroDatasets() {
+        Set<String> keys = redisTemplate.keys("bids:openneuro:datasets:*");
+        List<BidsDataset> datasets = new ArrayList<>();
+        if (keys.isEmpty()) {
+            datasets = openNeuroDal.load("openneuro/latest.txt");
+            log.info("Load {} datasets from local storage", datasets.size());
+        } else {
+            for (String key : keys) {
+                String value = redisTemplate.opsForValue().get(key);
+                datasets.add(JSONUtil.toBean(value, BidsDataset.class));
+            }
+            log.info("Get {} datasets from cache", datasets.size());
+        }
+
+        return datasets;
     }
 }

@@ -31,10 +31,18 @@ management:
       exposure:
         include: "*"
 
+job:
+  engine:
+    argo:
+      serverUrl: http://localhost:2746
+      namespace: argo
+      token: 
+
 bids:
   collector:
     openneuro:
       sync:
+        enabled: false
         cron: 0 0 0 * * MON
         # cron: 0 0/1 * * * ?
   storages:
