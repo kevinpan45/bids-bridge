@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: WorkflowTemplate
 metadata:
-  name: bids-apps
+  name: bids-apps-mriqc
   namespace: argo
   generateName: bids-apps-mriqc-
 spec:
