@@ -24,6 +24,7 @@ spring:
     consumer:
       fetch-min-size: 10
       auto-offset-reset: latest
+      enable-auto-commit: true
 
 management:
   endpoints:
