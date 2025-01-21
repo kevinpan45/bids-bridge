@@ -35,7 +35,7 @@ management:
 job:
   engine:
     argo:
-      serverUrl: http://localhost:2746
+      serverUrl: https://localhost:2746
       namespace: argo
       token: 
 
@@ -46,13 +46,3 @@ bids:
         enabled: false
         cron: 0 0 0 * * MON
         # cron: 0 0/1 * * * ?
-  storages:
-    - id: 1
-      name: default
-      provider: MinioBidsStorageDal
-      endpoint: ${MINIO_ENDPOINT}
-      bucket: bids
-      region: us-east-1
-      access-key: ${MINIO_ACCESS_KEY}
-      secret-key: ${MINIO_SECRET_KEY}
-      prefix:

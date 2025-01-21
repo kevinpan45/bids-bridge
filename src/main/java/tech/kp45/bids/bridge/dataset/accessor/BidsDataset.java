@@ -1,11 +1,14 @@
-package tech.kp45.bids.bridge.dataset.storage;
+package tech.kp45.bids.bridge.dataset.accessor;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
+import tech.kp45.bids.bridge.dataset.Dataset;
 
 /**
  * Each version of the dataset database record
  */
 @Data
+@Accessors(chain = true)
 public class BidsDataset {
     /**
      * The unique identifier of the dataset for platform management
@@ -21,6 +24,7 @@ public class BidsDataset {
     private String version;
     private String bidsVersion;
     private int participants;
+    private long size;
     /**
      * Valid by BIDS Validator or other validation program
      */
@@ -29,4 +33,11 @@ public class BidsDataset {
      * Contains derivatives
      */
     private boolean derived;
+
+    public Dataset toDataset() {
+        Dataset dataset = new Dataset();
+        dataset.setName(name);
+        dataset.setVersion(version);
+        return dataset;
+    }
 }

@@ -1,4 +1,4 @@
-package tech.kp45.bids.bridge.dataset.storage;
+package tech.kp45.bids.bridge.dataset.accessor;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -14,16 +14,25 @@ import org.springframework.stereotype.Service;
 import cn.hutool.core.io.FileUtil;
 import lombok.extern.slf4j.Slf4j;
 import tech.kp45.bids.bridge.common.exception.BasicRuntimeException;
+import tech.kp45.bids.bridge.dataset.Dataset;
 
 @Slf4j
 @Service
-public abstract class BidsStorageService {
+public abstract class BidsStorageAccessor {
 
     public static final String BIDS_DESCRIPTION_FILE_NAME = "dataset_description.json";
 
     public abstract Operator getOperator();
 
-    public abstract void scanBids(String path);
+    /**
+     * Scan BIDS datasets under the storage
+     */
+    public abstract List<BidsDataset> scan();
+
+    /**
+     * Load BIDS datasets under the storage and register as platform dataset entity
+     */
+    public abstract List<Dataset> load();
 
     public boolean exist(String path) {
         try {

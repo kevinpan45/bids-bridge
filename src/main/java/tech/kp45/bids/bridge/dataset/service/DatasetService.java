@@ -5,6 +5,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+
 import tech.kp45.bids.bridge.dataset.Dataset;
 import tech.kp45.bids.bridge.dataset.dao.DatasetMapper;
 
@@ -30,5 +33,11 @@ public class DatasetService {
         Dataset dataset = get(id);
         dataset.setDeleted(true);
         datasetMapper.updateById(dataset);
+    }
+
+    public boolean exist(String name, String version) {
+        LambdaQueryWrapper<Dataset> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Dataset::getName, name).eq(Dataset::getVersion, version);
+        return datasetMapper.selectCount(queryWrapper) > 0;
     }
 }

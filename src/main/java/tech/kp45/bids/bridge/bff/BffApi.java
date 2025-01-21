@@ -13,20 +13,21 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
-import tech.kp45.bids.bridge.collector.OpenNeuroCollector;
 import tech.kp45.bids.bridge.common.exception.BasicRuntimeException;
-import tech.kp45.bids.bridge.dataset.storage.BidsCheckMode;
-import tech.kp45.bids.bridge.dataset.storage.BidsDataset;
-import tech.kp45.bids.bridge.dataset.storage.BidsStorage;
-import tech.kp45.bids.bridge.dataset.storage.BidsStorageRegister;
-import tech.kp45.bids.bridge.dataset.storage.provider.MinioBidsStorageDal;
-import tech.kp45.bids.bridge.dataset.storage.provider.OpenNeuroDal;
+import tech.kp45.bids.bridge.dataset.Dataset;
+import tech.kp45.bids.bridge.dataset.accessor.BidsCheckMode;
+import tech.kp45.bids.bridge.dataset.accessor.BidsDataset;
+import tech.kp45.bids.bridge.dataset.accessor.provider.MinioBidsStorageDal;
+import tech.kp45.bids.bridge.dataset.accessor.provider.OpenNeuroDal;
 import tech.kp45.bids.bridge.job.scheduler.argo.ArgoProperties;
 import tech.kp45.bids.bridge.job.scheduler.argo.ArgoSdk;
+import tech.kp45.bids.bridge.storage.Storage;
+import tech.kp45.bids.bridge.storage.StorageService;
 
 @Slf4j
 @RestController
@@ -34,17 +35,17 @@ import tech.kp45.bids.bridge.job.scheduler.argo.ArgoSdk;
 public class BffApi {
 
     @Autowired
-    private BidsStorageRegister bidsStorageRegister;
-
-    @Autowired
     private RedisTemplate<String, String> redisTemplate;
 
     @Autowired
     private OpenNeuroDal openNeuroDal;
 
-    @GetMapping("/api/bids/storages")
-    public List<BidsStorage> listBidsStorage() {
-        List<BidsStorage> storages = bidsStorageRegister.getStorages();
+    @Autowired
+    private StorageService storageService;
+
+    @GetMapping("/api/storages")
+    public List<Storage> listBidsStorage() {
+        List<Storage> storages = storageService.list();
         storages.stream().forEach(s -> {
             if (s != null) {
                 s.setAccessKey(null);
@@ -54,9 +55,9 @@ public class BffApi {
         return storages;
     }
 
-    @GetMapping("/api/bids/storages/{id}")
-    public BidsStorage getBidsStorage(@PathVariable Integer id) {
-        BidsStorage storage = find(id);
+    @GetMapping("/api/storages/{id}")
+    public Storage getBidsStorage(@PathVariable Integer id) {
+        Storage storage = storageService.find(id);
         if (storage != null) {
             storage.setAccessKey(null);
             storage.setSecretKey(null);
@@ -64,9 +65,9 @@ public class BffApi {
         return storage;
     }
 
-    @GetMapping("/api/bids/storages/{id}/datasets")
+    @GetMapping("/api/storages/{id}/datasets")
     public List<String> listStorageBids(@PathVariable Integer id) {
-        BidsStorage storage = find(id);
+        Storage storage = storageService.find(id);
         if (storage == null) {
             log.error("Storage {} not found", id);
             throw new BasicRuntimeException("Storage not found");
@@ -82,9 +83,35 @@ public class BffApi {
         return datasets;
     }
 
-    @GetMapping("/api/bids/storages/{id}/datasets/{dataset}/files")
+    @PutMapping("/api/storages/{id}/bids")
+    public int scanStorageBids(@PathVariable Integer id) {
+        Storage storage = storageService.find(id);
+        if (storage == null) {
+            log.error("Storage {} not found", id);
+            throw new BasicRuntimeException("Storage not found");
+        }
+
+        MinioBidsStorageDal dal = new MinioBidsStorageDal(storage);
+        List<BidsDataset> datasets = dal.scan();
+        return datasets.size();
+    }
+
+    @PutMapping("/api/storages/{id}/datasets")
+    public int loadStorageBids(@PathVariable Integer id) {
+        Storage storage = storageService.find(id);
+        if (storage == null) {
+            log.error("Storage {} not found", id);
+            throw new BasicRuntimeException("Storage not found");
+        }
+
+        MinioBidsStorageDal dal = new MinioBidsStorageDal(storage);
+        List<Dataset> datasets = dal.load();
+        return datasets.size();
+    }
+
+    @GetMapping("/api/storages/{id}/datasets/{dataset}/files")
     public List<String> listDatasetFiles(@PathVariable Integer id, @PathVariable String dataset) {
-        BidsStorage storage = find(id);
+        Storage storage = storageService.find(id);
         if (storage == null) {
             log.error("Storage {} not found", id);
             throw new BasicRuntimeException("Storage not found");
@@ -112,14 +139,10 @@ public class BffApi {
         return files;
     }
 
-    private BidsStorage find(Integer id) {
-        return bidsStorageRegister.getStorages().stream().filter(s -> s.getId().equals(id)).findFirst().orElse(null);
-    }
-
     @Autowired
     private ArgoProperties argoProperties;
 
-    @PostMapping("/api/bids/openneuro/{dataset}/collections")
+    @PostMapping("/api/openneuro/{dataset}/collections")
     public void collectOpenNeuroDataset(@PathVariable String dataset) {
         if (!StringUtils.hasText(dataset)) {
             throw new BasicRuntimeException("Dataset cannot be blank");
@@ -128,18 +151,19 @@ public class BffApi {
         boolean exist = openNeuroDal.exist(dataset + "/");
         if (exist) {
             ArgoSdk argoSdk = new ArgoSdk(argoProperties);
-            argoSdk.submit("openneuro-collector", Map.of("dataset", dataset));
+            String workflowId = argoSdk.submit("openneuro-collector", Map.of("dataset", dataset));
+            log.info("Workflow {} is submitted for dataset {} collection", workflowId, dataset);
         } else {
             throw new BasicRuntimeException("Dataset not found");
         }
     }
 
-    @GetMapping("/api/bids/openneuro/datasets")
+    @GetMapping("/api/openneuro/bids")
     public List<BidsDataset> listOpenNeuroDatasets() {
         Set<String> keys = redisTemplate.keys("bids:openneuro:datasets:*");
         List<BidsDataset> datasets = new ArrayList<>();
         if (keys.isEmpty()) {
-            datasets = openNeuroDal.load(OpenNeuroCollector.BIDS_OPENNEURO_DATASET_ARCHTYPE_PATH);
+            datasets = openNeuroDal.scan();
             log.info("Load {} datasets from local storage", datasets.size());
         } else {
             for (String key : keys) {

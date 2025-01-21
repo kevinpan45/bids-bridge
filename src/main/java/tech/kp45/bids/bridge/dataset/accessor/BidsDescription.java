@@ -1,4 +1,4 @@
-package tech.kp45.bids.bridge.dataset.storage;
+package tech.kp45.bids.bridge.dataset.accessor;
 
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;

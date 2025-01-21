@@ -13,8 +13,9 @@ import org.junit.jupiter.api.Test;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import tech.kp45.bids.bridge.dataset.storage.BidsDataset;
-import tech.kp45.bids.bridge.dataset.storage.BidsStorageService;
+import tech.kp45.bids.bridge.dataset.accessor.BidsDataset;
+import tech.kp45.bids.bridge.dataset.accessor.BidsStorageAccessor;
+import tech.kp45.bids.bridge.dataset.accessor.provider.OpenNeuroDal;
 
 public class OpenNeuroDalTest {
 
@@ -45,7 +46,7 @@ public class OpenNeuroDalTest {
     void testListPath() {
         List<String> paths = dal.listPath(testPath);
         assertFalse(paths.isEmpty());
-        assertTrue(paths.contains(testPath + BidsStorageService.BIDS_DESCRIPTION_FILE_NAME));
+        assertTrue(paths.contains(testPath + BidsStorageAccessor.BIDS_DESCRIPTION_FILE_NAME));
     }
 
     @Test

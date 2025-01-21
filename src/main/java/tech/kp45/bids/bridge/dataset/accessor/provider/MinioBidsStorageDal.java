@@ -1,6 +1,7 @@
-package tech.kp45.bids.bridge.dataset.storage.provider;
+package tech.kp45.bids.bridge.dataset.accessor.provider;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.opendal.Operator;
@@ -8,15 +9,17 @@ import org.springframework.util.StringUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import tech.kp45.bids.bridge.common.exception.BasicRuntimeException;
-import tech.kp45.bids.bridge.dataset.storage.BidsStorage;
-import tech.kp45.bids.bridge.dataset.storage.BidsStorageService;
+import tech.kp45.bids.bridge.dataset.Dataset;
+import tech.kp45.bids.bridge.dataset.accessor.BidsDataset;
+import tech.kp45.bids.bridge.dataset.accessor.BidsStorageAccessor;
+import tech.kp45.bids.bridge.storage.Storage;
 
 @Slf4j
-public class MinioBidsStorageDal extends BidsStorageService {
+public class MinioBidsStorageDal extends BidsStorageAccessor {
 
     private final Map<String, String> conf = new HashMap<>();
 
-    public MinioBidsStorageDal(BidsStorage storage) {
+    public MinioBidsStorageDal(Storage storage) {
         conf.put("endpoint", storage.getEndpoint());
         conf.put("region", storage.getRegion());
         conf.put("bucket", storage.getBucket());
@@ -40,8 +43,14 @@ public class MinioBidsStorageDal extends BidsStorageService {
     }
 
     @Override
-    public void scanBids(String path) {
+    public List<BidsDataset> scan() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'scanBids'");
+    }
+
+    @Override
+    public List<Dataset> load() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'load'");
     }
 }

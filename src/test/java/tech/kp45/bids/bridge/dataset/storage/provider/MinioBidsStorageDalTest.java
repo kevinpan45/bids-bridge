@@ -17,10 +17,11 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
 import tech.kp45.bids.bridge.common.exception.BasicRuntimeException;
-import tech.kp45.bids.bridge.dataset.storage.BidsCheckMode;
-import tech.kp45.bids.bridge.dataset.storage.BidsDataset;
-import tech.kp45.bids.bridge.dataset.storage.BidsStorage;
-import tech.kp45.bids.bridge.dataset.storage.BidsStorageService;
+import tech.kp45.bids.bridge.dataset.accessor.BidsCheckMode;
+import tech.kp45.bids.bridge.dataset.accessor.BidsDataset;
+import tech.kp45.bids.bridge.dataset.accessor.BidsStorageAccessor;
+import tech.kp45.bids.bridge.dataset.accessor.provider.MinioBidsStorageDal;
+import tech.kp45.bids.bridge.storage.Storage;
 
 @Slf4j
 public class MinioBidsStorageDalTest {
@@ -30,7 +31,7 @@ public class MinioBidsStorageDalTest {
 
     @BeforeEach
     public void setUp() {
-        BidsStorage storage = new BidsStorage();
+        Storage storage = new Storage();
         storage.setEndpoint("http://localhost:9000");
         storage.setRegion("us-east-1");
         storage.setBucket("bids");
@@ -74,7 +75,7 @@ public class MinioBidsStorageDalTest {
     void testListPath() {
         List<String> paths = dal.listPath(testPath);
         assertFalse(paths.isEmpty());
-        assertTrue(paths.contains(testPath + BidsStorageService.BIDS_DESCRIPTION_FILE_NAME));
+        assertTrue(paths.contains(testPath + BidsStorageAccessor.BIDS_DESCRIPTION_FILE_NAME));
     }
 
     @Test

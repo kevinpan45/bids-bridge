@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 
-import tech.kp45.bids.bridge.dataset.storage.provider.OpenNeuroDal;
+import tech.kp45.bids.bridge.dataset.accessor.provider.OpenNeuroDal;
 
 @Configuration
 public class OpenNeuroCollectionTrigger {
@@ -34,7 +34,7 @@ public class OpenNeuroCollectionTrigger {
             acquired = redisTemplate.opsForValue().setIfAbsent(OPENNEURO_SYNC_TASK_LOCK, "locked", 30,
                     TimeUnit.SECONDS);
             if (acquired) {
-                openNeuroDal.scanBids(OpenNeuroCollector.BIDS_OPENNEURO_DATASET_ARCHTYPE_PATH);
+                openNeuroDal.scan();
             }
         } finally {
             if (acquired) {
