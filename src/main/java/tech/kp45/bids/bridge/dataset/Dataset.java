@@ -19,6 +19,8 @@ public class Dataset {
     private String name;
     @TableField("version")
     private String version;
+    @TableField("storage_id")
+    private Integer storageId;
     @TableField("created_at")
     private Date createdAt;
     @TableField("updated_at")

@@ -24,6 +24,7 @@ import tech.kp45.bids.bridge.dataset.accessor.BidsCheckMode;
 import tech.kp45.bids.bridge.dataset.accessor.BidsDataset;
 import tech.kp45.bids.bridge.dataset.accessor.provider.MinioBidsStorageDal;
 import tech.kp45.bids.bridge.dataset.accessor.provider.OpenNeuroDal;
+import tech.kp45.bids.bridge.dataset.service.DatasetService;
 import tech.kp45.bids.bridge.job.scheduler.argo.ArgoProperties;
 import tech.kp45.bids.bridge.job.scheduler.argo.ArgoSdk;
 import tech.kp45.bids.bridge.storage.Storage;
@@ -42,6 +43,9 @@ public class BffApi {
 
     @Autowired
     private StorageService storageService;
+
+    @Autowired
+    private DatasetService datasetService;
 
     @GetMapping("/api/storages")
     public List<Storage> listBidsStorage() {
@@ -66,21 +70,14 @@ public class BffApi {
     }
 
     @GetMapping("/api/storages/{id}/datasets")
-    public List<String> listStorageBids(@PathVariable Integer id) {
+    public List<Dataset> listStorageBids(@PathVariable Integer id) {
         Storage storage = storageService.find(id);
         if (storage == null) {
             log.error("Storage {} not found", id);
             throw new BasicRuntimeException("Storage not found");
         }
 
-        List<String> datasets = new ArrayList<>();
-
-        MinioBidsStorageDal dal = new MinioBidsStorageDal(storage);
-        dal.listBidsPath(BidsCheckMode.BIDS_FOLDER_STRUCTURE).stream().forEach(dataset -> {
-            datasets.add(dataset.replace("/", ""));
-        });
-
-        return datasets;
+        return datasetService.listByStorage(id);
     }
 
     @PutMapping("/api/storages/{id}/bids")
@@ -105,7 +102,15 @@ public class BffApi {
         }
 
         MinioBidsStorageDal dal = new MinioBidsStorageDal(storage);
-        List<Dataset> datasets = dal.load();
+        List<Dataset> datasets = new ArrayList<>();
+        List<BidsDataset> bidses = dal.scan();
+        for (BidsDataset bidsDataset : bidses) {
+            Dataset dataset = bidsDataset.toDataset();
+            if (!datasetService.exist(dataset.getName(), dataset.getVersion())) {
+                datasetService.create(dataset);
+            }
+            datasets.add(dataset);
+        }
         return datasets.size();
     }
 

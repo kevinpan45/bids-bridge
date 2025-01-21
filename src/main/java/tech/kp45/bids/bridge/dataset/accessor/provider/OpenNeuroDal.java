@@ -84,7 +84,6 @@ public class OpenNeuroDal extends BidsStorageAccessor {
         return bidses;
     }
 
-    @Override
     public List<Dataset> load() {
         List<Dataset> datasets = new ArrayList<>();
         String path = BIDS_OPENNEURO_DATASET_ARCHTYPE_PATH;

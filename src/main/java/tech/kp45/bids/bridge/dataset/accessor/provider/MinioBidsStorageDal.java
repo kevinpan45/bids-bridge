@@ -1,5 +1,6 @@
 package tech.kp45.bids.bridge.dataset.accessor.provider;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,7 +10,7 @@ import org.springframework.util.StringUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import tech.kp45.bids.bridge.common.exception.BasicRuntimeException;
-import tech.kp45.bids.bridge.dataset.Dataset;
+import tech.kp45.bids.bridge.dataset.accessor.BidsCheckMode;
 import tech.kp45.bids.bridge.dataset.accessor.BidsDataset;
 import tech.kp45.bids.bridge.dataset.accessor.BidsStorageAccessor;
 import tech.kp45.bids.bridge.storage.Storage;
@@ -44,13 +45,12 @@ public class MinioBidsStorageDal extends BidsStorageAccessor {
 
     @Override
     public List<BidsDataset> scan() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'scanBids'");
-    }
-
-    @Override
-    public List<Dataset> load() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'load'");
+        List<BidsDataset> bidses = new ArrayList<>();
+        List<String> paths = listBidsPath(BidsCheckMode.BIDS_FOLDER_STRUCTURE);
+        for (String path : paths) {
+            BidsDataset bids = initialize(path);
+            bidses.add(bids);
+        }
+        return bidses;
     }
 }

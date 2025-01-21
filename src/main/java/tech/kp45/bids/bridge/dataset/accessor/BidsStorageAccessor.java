@@ -29,11 +29,6 @@ public abstract class BidsStorageAccessor {
      */
     public abstract List<BidsDataset> scan();
 
-    /**
-     * Load BIDS datasets under the storage and register as platform dataset entity
-     */
-    public abstract List<Dataset> load();
-
     public boolean exist(String path) {
         try {
             getOperator().stat(path);
