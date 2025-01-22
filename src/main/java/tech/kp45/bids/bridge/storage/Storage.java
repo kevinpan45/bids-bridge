@@ -2,6 +2,7 @@ package tech.kp45.bids.bridge.storage;
 
 import java.util.Map;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -13,7 +14,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @TableName("storage")
 public class Storage {
-    @TableId
+    @TableId(type = IdType.AUTO)
     private Integer id;
     @TableField("`name`")
     private String name;
