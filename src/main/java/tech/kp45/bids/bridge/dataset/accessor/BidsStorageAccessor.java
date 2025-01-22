@@ -102,7 +102,9 @@ public abstract class BidsStorageAccessor {
 
     public BidsDataset initialize(String path) {
         BidsDescription bidsDescription = getBidsDescription(path);
-        return bidsDescription.toBidsDataset();
+        BidsDataset bids = bidsDescription.toBidsDataset();
+        bids.setStoragePath(path);
+        return bids;
     }
 
     /**

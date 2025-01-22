@@ -38,6 +38,7 @@ public class BidsDataset {
         Dataset dataset = new Dataset();
         dataset.setName(name);
         dataset.setVersion(version);
+        dataset.setStoragePath(storagePath);
         return dataset;
     }
 }
