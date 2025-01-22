@@ -20,9 +20,9 @@ import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
 import tech.kp45.bids.bridge.common.exception.BasicRuntimeException;
 import tech.kp45.bids.bridge.dataset.Dataset;
+import tech.kp45.bids.bridge.dataset.DatasetService;
 import tech.kp45.bids.bridge.dataset.accessor.BidsDataset;
 import tech.kp45.bids.bridge.dataset.accessor.BidsStorageAccessor;
-import tech.kp45.bids.bridge.dataset.service.DatasetService;
 
 @Slf4j
 @Component

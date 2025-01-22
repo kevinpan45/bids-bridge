@@ -1,8 +1,6 @@
-package tech.kp45.bids.bridge.dataset.dao;
+package tech.kp45.bids.bridge.dataset;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-
-import tech.kp45.bids.bridge.dataset.Dataset;
 
 public interface DatasetMapper extends BaseMapper<Dataset> {
     

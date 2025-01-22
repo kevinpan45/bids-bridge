@@ -1,4 +1,4 @@
-package tech.kp45.bids.bridge.dataset.service;
+package tech.kp45.bids.bridge.dataset;
 
 import java.util.List;
 
@@ -6,9 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-
-import tech.kp45.bids.bridge.dataset.Dataset;
-import tech.kp45.bids.bridge.dataset.dao.DatasetMapper;
 
 @Service
 public class DatasetService {
