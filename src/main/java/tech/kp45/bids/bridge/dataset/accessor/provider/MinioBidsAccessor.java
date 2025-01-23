@@ -16,11 +16,11 @@ import tech.kp45.bids.bridge.dataset.accessor.BidsStorageAccessor;
 import tech.kp45.bids.bridge.storage.Storage;
 
 @Slf4j
-public class MinioBidsStorageDal extends BidsStorageAccessor {
+public class MinioBidsAccessor extends BidsStorageAccessor {
 
     private final Map<String, String> conf = new HashMap<>();
 
-    public MinioBidsStorageDal(Storage storage) {
+    public MinioBidsAccessor(Storage storage) {
         conf.put("endpoint", storage.getEndpoint());
         conf.put("region", storage.getRegion());
         conf.put("bucket", storage.getBucket());

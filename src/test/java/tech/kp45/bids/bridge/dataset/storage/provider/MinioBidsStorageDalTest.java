@@ -20,14 +20,14 @@ import tech.kp45.bids.bridge.common.exception.BasicRuntimeException;
 import tech.kp45.bids.bridge.dataset.accessor.BidsCheckMode;
 import tech.kp45.bids.bridge.dataset.accessor.BidsDataset;
 import tech.kp45.bids.bridge.dataset.accessor.BidsStorageAccessor;
-import tech.kp45.bids.bridge.dataset.accessor.provider.MinioBidsStorageDal;
+import tech.kp45.bids.bridge.dataset.accessor.provider.MinioBidsAccessor;
 import tech.kp45.bids.bridge.storage.Storage;
 
 @Slf4j
 public class MinioBidsStorageDalTest {
     private String testPath = "ds005616/";
 
-    private MinioBidsStorageDal dal = null;
+    private MinioBidsAccessor accessor = null;
 
     @BeforeEach
     public void setUp() {
@@ -44,56 +44,56 @@ public class MinioBidsStorageDalTest {
             log.error("Access key or secret key is not set");
             throw new BasicRuntimeException("Access key or secret key is not set");
         }
-        dal = new MinioBidsStorageDal(storage);
+        accessor = new MinioBidsAccessor(storage);
     }
 
     @Test
     void testDerived() {
-        boolean derived = dal.derived(testPath);
+        boolean derived = accessor.derived(testPath);
         assertTrue(derived);
     }
 
     @Test
     void testInitialize() {
-        BidsDataset bidsDataset = dal.initialize(testPath);
+        BidsDataset bidsDataset = accessor.initialize(testPath);
         assertTrue("whole-spine".equals(bidsDataset.getName()));
     }
 
     @Test
     void testListDerivatives() {
-        List<String> derivatives = dal.listDerivatives(testPath);
+        List<String> derivatives = accessor.listDerivatives(testPath);
         assertFalse(derivatives.isEmpty());
     }
 
     @Test
     void testListDataset() {
-        List<String> datasets = dal.listBidsPath(BidsCheckMode.BIDS_FOLDER_STRUCTURE);
+        List<String> datasets = accessor.listBidsPath(BidsCheckMode.BIDS_FOLDER_STRUCTURE);
         assertFalse(datasets.isEmpty());
     }
 
     @Test
     void testListPath() {
-        List<String> paths = dal.listPath(testPath);
+        List<String> paths = accessor.listPath(testPath);
         assertFalse(paths.isEmpty());
         assertTrue(paths.contains(testPath + BidsStorageAccessor.BIDS_DESCRIPTION_FILE_NAME));
     }
 
     @Test
     void testListSub() {
-        List<String> subs = dal.listSub(testPath);
+        List<String> subs = accessor.listSub(testPath);
         assertFalse(subs.isEmpty());
     }
 
     @Test
     void testScanFiles() {
         List<String> files = new ArrayList<>();
-        dal.scanFiles(testPath, files);
+        accessor.scanFiles(testPath, files);
         assertFalse(files.isEmpty());
     }
 
     @Test
     void testGetDescriptorFile() {
-        File descriptorFile = dal.getDescriptorFile(testPath);
+        File descriptorFile = accessor.getDescriptorFile(testPath);
         String content = FileUtil.readString(descriptorFile, StandardCharsets.UTF_8);
         assertTrue(JSONUtil.isTypeJSONObject(content));
         JSONObject jsonObject = JSONUtil.parseObj(content);
@@ -102,7 +102,7 @@ public class MinioBidsStorageDalTest {
 
     @Test
     void testGetParticipantFile() {
-        File participantFile = dal.getParticipantFile(testPath);
+        File participantFile = accessor.getParticipantFile(testPath);
         assertTrue(participantFile.exists());
     }
 }

@@ -18,7 +18,7 @@ GET http://127.0.0.1:8080/api/storages/1/datasets HTTP/1.1
 
 ###
 
-GET http://127.0.0.1:8080/api/storages/1/datasets/ds005616/files HTTP/1.1
+GET http://127.0.0.1:8080/api/datasets/1/files HTTP/1.1
 
 ###
 

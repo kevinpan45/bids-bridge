@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 
-import tech.kp45.bids.bridge.dataset.accessor.provider.OpenNeuroDal;
+import tech.kp45.bids.bridge.dataset.accessor.provider.OpenNeuroAccessor;
 
 @Configuration
 public class OpenNeuroCollectionTrigger {
@@ -16,7 +16,7 @@ public class OpenNeuroCollectionTrigger {
     private static final String OPENNEURO_SYNC_TASK_LOCK = "OPENNEURO_SYNC_TASK_LOCK";
 
     @Autowired
-    private OpenNeuroDal openNeuroDal;
+    private OpenNeuroAccessor openNeuroDal;
 
     @Autowired
     private RedisTemplate<String, String> redisTemplate;

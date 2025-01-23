@@ -15,14 +15,14 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import tech.kp45.bids.bridge.dataset.accessor.BidsDataset;
 import tech.kp45.bids.bridge.dataset.accessor.BidsStorageAccessor;
-import tech.kp45.bids.bridge.dataset.accessor.provider.OpenNeuroDal;
+import tech.kp45.bids.bridge.dataset.accessor.provider.OpenNeuroAccessor;
 
 public class OpenNeuroDalTest {
 
     private String testPath = "ds005127/";
     private String expectedName = "AMRI 16-N-0031 sleep1";
 
-    private OpenNeuroDal dal = new OpenNeuroDal();
+    private OpenNeuroAccessor dal = new OpenNeuroAccessor();
 
     @Test
     void testDerived() {

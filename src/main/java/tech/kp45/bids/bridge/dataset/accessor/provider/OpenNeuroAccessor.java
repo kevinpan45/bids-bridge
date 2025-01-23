@@ -26,7 +26,7 @@ import tech.kp45.bids.bridge.dataset.accessor.BidsStorageAccessor;
 
 @Slf4j
 @Component
-public class OpenNeuroDal extends BidsStorageAccessor {
+public class OpenNeuroAccessor extends BidsStorageAccessor {
 
     public static final String BIDS_DATASET_SYNC_TOPIC = "bids-collection-dataset-openneuro";
     private static final String BIDS_DATASET_TRACKING_PREFIX = "bids:dataset:openneuro:tracking:";
