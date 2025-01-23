@@ -1,6 +1,5 @@
 package tech.kp45.bids.bridge.bff;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -11,14 +10,17 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
 import tech.kp45.bids.bridge.common.exception.BasicRuntimeException;
-import tech.kp45.bids.bridge.dataset.storage.BidsCheckMode;
-import tech.kp45.bids.bridge.dataset.storage.BidsStorage;
-import tech.kp45.bids.bridge.dataset.storage.BidsStorageRegister;
-import tech.kp45.bids.bridge.dataset.storage.provider.MinioBidsStorageDal;
+import tech.kp45.bids.bridge.dataset.Dataset;
+import tech.kp45.bids.bridge.dataset.DatasetService;
+import tech.kp45.bids.bridge.dataset.accessor.BidsDataset;
+import tech.kp45.bids.bridge.dataset.accessor.provider.MinioBidsAccessor;
+import tech.kp45.bids.bridge.storage.Storage;
+import tech.kp45.bids.bridge.storage.StorageService;
 
 @Slf4j
 @RestController
@@ -26,14 +28,17 @@ import tech.kp45.bids.bridge.dataset.storage.provider.MinioBidsStorageDal;
 public class BffApi {
 
     @Autowired
-    private BidsStorageRegister bidsStorageRegister;
-
-    @Autowired
     private RedisTemplate<String, String> redisTemplate;
 
-    @GetMapping("/api/bids/storages")
-    public List<BidsStorage> listBidsStorage() {
-        List<BidsStorage> storages = bidsStorageRegister.getStorages();
+    @Autowired
+    private StorageService storageService;
+
+    @Autowired
+    private DatasetService datasetService;
+
+    @GetMapping("/api/storages")
+    public List<Storage> listBidsStorage() {
+        List<Storage> storages = storageService.list();
         storages.stream().forEach(s -> {
             if (s != null) {
                 s.setAccessKey(null);
@@ -43,9 +48,9 @@ public class BffApi {
         return storages;
     }
 
-    @GetMapping("/api/bids/storages/{id}")
-    public BidsStorage getBidsStorage(@PathVariable Integer id) {
-        BidsStorage storage = find(id);
+    @GetMapping("/api/storages/{id}")
+    public Storage getBidsStorage(@PathVariable Integer id) {
+        Storage storage = storageService.find(id);
         if (storage != null) {
             storage.setAccessKey(null);
             storage.setSecretKey(null);
@@ -53,38 +58,71 @@ public class BffApi {
         return storage;
     }
 
-    @GetMapping("/api/bids/storages/{id}/datasets")
-    public List<String> listStorageBids(@PathVariable Integer id) {
-        BidsStorage storage = find(id);
+    @GetMapping("/api/storages/{id}/datasets")
+    public List<Dataset> listStorageBids(@PathVariable Integer id) {
+        Storage storage = storageService.find(id);
         if (storage == null) {
             log.error("Storage {} not found", id);
             throw new BasicRuntimeException("Storage not found");
         }
 
-        List<String> datasets = new ArrayList<>();
-
-        MinioBidsStorageDal dal = new MinioBidsStorageDal(storage);
-        dal.listBidsPath(BidsCheckMode.BIDS_FOLDER_STRUCTURE).stream().forEach(dataset -> {
-            datasets.add(dataset.replace("/", ""));
-        });
-
-        return datasets;
+        return datasetService.listByStorage(id);
     }
 
-    @GetMapping("/api/bids/storages/{id}/datasets/{dataset}/files")
-    public List<String> listDatasetFiles(@PathVariable Integer id, @PathVariable String dataset) {
-        BidsStorage storage = find(id);
+    @PutMapping("/api/storages/{id}/bids")
+    public int scanStorageBids(@PathVariable Integer id) {
+        Storage storage = storageService.find(id);
         if (storage == null) {
             log.error("Storage {} not found", id);
             throw new BasicRuntimeException("Storage not found");
         }
 
+        MinioBidsAccessor accessor = new MinioBidsAccessor(storage);
+        List<BidsDataset> datasets = accessor.scan();
+        return datasets.size();
+    }
+
+    @PutMapping("/api/storages/{id}/datasets")
+    public int loadStorageBids(@PathVariable Integer id) {
+        Storage storage = storageService.find(id);
+        if (storage == null) {
+            log.error("Storage {} not found", id);
+            throw new BasicRuntimeException("Storage not found");
+        }
+
+        MinioBidsAccessor accessor = new MinioBidsAccessor(storage);
+        List<Dataset> datasets = new ArrayList<>();
+        List<BidsDataset> bidses = accessor.scan();
+        for (BidsDataset bidsDataset : bidses) {
+            Dataset dataset = bidsDataset.toDataset();
+            dataset.setStorageId(id);
+            if (!datasetService.exist(dataset.getName(), dataset.getVersion())) {
+                datasetService.create(dataset);
+            }
+            datasets.add(dataset);
+        }
+        return datasets.size();
+    }
+
+    @GetMapping("/api/datasets/{id}/files")
+    public List<String> listDatasetFiles(@PathVariable Integer id) {
+        Dataset dataset = datasetService.get(id);
+        if (dataset == null) {
+            log.error("Dataset {} not found", id);
+            throw new BasicRuntimeException("Dataset not found");
+        }
         List<String> files = new ArrayList<>();
-        String bidsFilesKey = "bids:dataset:" + dataset + ":files:";
+        String bidsFilesKey = "bids:dataset:" + id + ":files:";
         Set<String> fileKeys = redisTemplate.keys(bidsFilesKey + "*");
         if (fileKeys.isEmpty()) {
-            MinioBidsStorageDal dal = new MinioBidsStorageDal(storage);
-            dal.scanFiles(dataset + File.separator, files);
+            Integer storageId = dataset.getStorageId();
+            Storage storage = storageService.find(storageId);
+            if (storage == null) {
+                log.error("Storage {} not found", storageId);
+                throw new BasicRuntimeException("Storage not found");
+            }
+            MinioBidsAccessor accessor = new MinioBidsAccessor(storage);
+            accessor.scanFiles(dataset.getStoragePath(), files);
             log.info("Get {} files from dataset {}", files.size(), dataset);
             files.stream().forEach(file -> {
                 String filename = StringUtils.getFilename(file);
@@ -99,9 +137,5 @@ public class BffApi {
         }
 
         return files;
-    }
-
-    private BidsStorage find(Integer id) {
-        return bidsStorageRegister.getStorages().stream().filter(s -> s.getId().equals(id)).findFirst().orElse(null);
     }
 }

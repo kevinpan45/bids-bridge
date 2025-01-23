@@ -7,7 +7,7 @@ spring:
     username: ${MYSQL_USER}
     password: ${MYSQL_PASSWORD}
   flyway:
-    enabled: true
+    enabled: false
     locations: classpath:db/migration
     baseline-on-migrate: true
   data:
@@ -24,6 +24,7 @@ spring:
     consumer:
       fetch-min-size: 10
       auto-offset-reset: latest
+      enable-auto-commit: true
 
 management:
   endpoints:
@@ -31,19 +32,17 @@ management:
       exposure:
         include: "*"
 
+job:
+  engine:
+    argo:
+      serverUrl: https://localhost:2746
+      namespace: argo
+      token: 
+
 bids:
   collector:
     openneuro:
       sync:
+        enabled: false
         cron: 0 0 0 * * MON
         # cron: 0 0/1 * * * ?
-  storages:
-    - id: 1
-      name: default
-      provider: MinioBidsStorageDal
-      endpoint: ${MINIO_ENDPOINT}
-      bucket: bids
-      region: us-east-1
-      access-key: ${MINIO_ACCESS_KEY}
-      secret-key: ${MINIO_SECRET_KEY}
-      prefix:

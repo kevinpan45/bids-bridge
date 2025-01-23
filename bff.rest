@@ -1,13 +1,29 @@
-GET http://127.0.0.1:8080/api/bids/storages HTTP/1.1
+GET http://127.0.0.1:8080/api/storages HTTP/1.1
 
 ###
 
-GET http://127.0.0.1:8080/api/bids/storages/1 HTTP/1.1
+GET http://127.0.0.1:8080/api/storages/1 HTTP/1.1
 
 ###
 
-GET http://127.0.0.1:8080/api/bids/storages/1/datasets HTTP/1.1
+PUT http://127.0.0.1:8080/api/storages/1/bids HTTP/1.1
 
 ###
 
-GET http://127.0.0.1:8080/api/bids/storages/1/datasets/ds004776/files HTTP/1.1
+PUT http://127.0.0.1:8080/api/storages/1/datasets HTTP/1.1
+
+###
+
+GET http://127.0.0.1:8080/api/storages/1/datasets HTTP/1.1
+
+###
+
+GET http://127.0.0.1:8080/api/datasets/1/files HTTP/1.1
+
+###
+
+POST http://127.0.0.1:8080/api/openneuro/ds005625/collections HTTP/1.1
+
+###
+
+GET http://127.0.0.1:8080/api/openneuro/bids HTTP/1.1
