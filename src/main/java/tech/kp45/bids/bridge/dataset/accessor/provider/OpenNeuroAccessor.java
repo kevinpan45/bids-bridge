@@ -73,12 +73,9 @@ public class OpenNeuroAccessor extends BidsStorageAccessor {
         for (String line : lines) {
             JSONObject datasetJson = JSONUtil.parseObj(line);
             BidsDataset bids = convert(datasetJson);
-            if (!datasetService.exist(bids.getName(), bids.getVersion())) {
-                String trackingKey = BIDS_DATASET_TRACKING_PREFIX + bids.getUid() + ":" + bids.getVersion();
-                redisTemplate.opsForValue().set(trackingKey, line, 1, TimeUnit.DAYS);
-                log.info("Dataset {} is updated to {}", bids.getUid(), bids.getVersion());
-            }
-
+            String trackingMetaKey = BIDS_DATASET_TRACKING_PREFIX + bids.getUid() + ":" + bids.getVersion()
+                    + ":metadata";
+            redisTemplate.opsForValue().set(trackingMetaKey, line, 1, TimeUnit.DAYS);
             bidses.add(bids);
         }
         return bidses;
