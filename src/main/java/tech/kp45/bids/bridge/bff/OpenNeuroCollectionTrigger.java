@@ -1,4 +1,4 @@
-package tech.kp45.bids.bridge.collector;
+package tech.kp45.bids.bridge.bff;
 
 import java.util.concurrent.TimeUnit;
 
