@@ -43,6 +43,6 @@ bids:
   collector:
     openneuro:
       sync:
-        enabled: false
+        enabled: true
         cron: 0 0 0 * * MON
-        # cron: 0 0/1 * * * ?
+        # cron: 0 0/5 * * * ?

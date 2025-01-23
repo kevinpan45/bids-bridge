@@ -28,7 +28,7 @@ import tech.kp45.bids.bridge.dataset.accessor.BidsStorageAccessor;
 @Component
 public class OpenNeuroAccessor extends BidsStorageAccessor {
 
-    public static final String BIDS_DATASET_SYNC_TOPIC = "bids-collection-dataset-openneuro";
+    public static final String OPENNEURO_BIDS_TRACK_TOPIC = "openneuro.bids.track";
     private static final String BIDS_DATASET_TRACKING_PREFIX = "bids:dataset:openneuro:tracking:";
     public static final String BIDS_DATASET_CACHE_PREFIX = "bids:openneuro:datasets:";
     public static final String BIDS_OPENNEURO_DATASET_ARCHTYPE_PATH = "openneuro/latest.txt";
@@ -115,6 +115,7 @@ public class OpenNeuroAccessor extends BidsStorageAccessor {
                 .setModality(modality)
                 .setParticipants(participants)
                 .setSize(size)
+                .setStoragePath(accessionNumber + "/")
                 .setValid(true);
 
         return dataset;
