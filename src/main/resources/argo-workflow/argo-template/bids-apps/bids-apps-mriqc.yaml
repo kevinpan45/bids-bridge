@@ -13,7 +13,7 @@ spec:
       accessModes: [ "ReadWriteOnce" ]
       resources:
         requests:
-          storage: 5Gi
+          storage: 10Gi
   templates:
     - name: main
       steps:
@@ -25,6 +25,8 @@ spec:
                 value: "{{workflow.parameters.dataset}}"
         - - name: execute-pipeline
             template: execute-pipeline
+        - - name: upload-artifact
+            template: upload-artifact
     - name: load-bids
       container:
         image: rclone/rclone:latest
@@ -55,10 +57,29 @@ spec:
         resources:
           requests:
             cpu: "4"
-            memory: "8Gi"
+            memory: "16Gi"
           limits:
             cpu: "8"
             memory: "16Gi"
         volumeMounts:
           - name: shared-data
             mountPath: /shared
+    - name: upload-artifact
+      container:
+        image: rclone/rclone:latest
+        command: ["rclone"]
+        args:
+          - "copy"
+          - "/shared/artifact"
+          - "minio:artifact/{{workflow.name}}"
+          - "--verbose"
+        volumeMounts:
+          - name: rclone-openneuro
+            mountPath: /root/.config/rclone/
+            readOnly: true
+          - name: shared-data
+            mountPath: /shared
+      volumes:
+        - name: rclone-openneuro
+          configMap:
+            name: rclone-openneuro

@@ -65,5 +65,5 @@ argo template create ./argo-template/bids-collector/openneuro-collector.yaml
 # test template
 argo submit --from WorkflowTemplate/openneuro-collector -p dataset=ds004776 -n argo
 # excute workflow after dataset is collected
-argo submit --from WorkflowTemplate/bids-apps -p dataset=ds004776 -n argo
+argo submit --from WorkflowTemplate/bids-apps-mriqc -p dataset=ds004776 -n argo
 ```
