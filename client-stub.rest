@@ -39,3 +39,7 @@ POST http://127.0.0.1:8080/api/openneuro/ds005625/collections HTTP/1.1
 ###
 
 GET http://127.0.0.1:8080/api/openneuro/bids HTTP/1.1
+
+###
+
+GET http://127.0.0.1:8080/api/pipelines HTTP/1.1

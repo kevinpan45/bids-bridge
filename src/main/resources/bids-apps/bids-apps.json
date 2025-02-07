@@ -11,7 +11,7 @@
                 "func"
             ],
             "description": "prototype AFNI bids app implementing participant level preprocessing with afni_proc.py",
-            "latest_version": "1.0.0"
+            "latest_version": "v0.0.2"
         },
         {
             "gh": "bids-apps/antsCorticalThickness",
@@ -24,7 +24,7 @@
                 "anat"
             ],
             "description": "BIDS App for calculating cortical thickness using ANTs",
-            "latest_version": "1.0.0"
+            "latest_version": "unstable"
         },
         {
             "gh": "bids-apps/baracus",
@@ -37,7 +37,7 @@
                 "anat"
             ],
             "description": "Predicts brain age, based on data from Freesurfer 5.3",
-            "latest_version": "1.0.0"
+            "latest_version": "v1.1.4"
         },
         {
             "gh": "bids-apps/brainiak-srm",
@@ -50,7 +50,7 @@
                 "func"
             ],
             "description": "This is the BIDS-app version of the Shared Response Model (SRM) of BrainIAK",
-            "latest_version": "1.0.0"
+            "latest_version": "unstable"
         },
         {
             "gh": "bids-apps/BrainSuite",
@@ -65,7 +65,7 @@
                 "func"
             ],
             "description": "BrainSuite's structural, diffusion, and functional MRI processing pipelines with QC functionalities.",
-            "latest_version": "1.0.0"
+            "latest_version": "unstable"
         },
         {
             "gh": "bids-apps/BROCCOLI",
@@ -73,7 +73,7 @@
             "dh": "bids/broccoli",
             "comment": "missing test data: https://github.com/bids-apps/BROCCOLI/issues/13",
             "description": "BIDS App for BROCCOLI",
-            "latest_version": "1.0.0"
+            "latest_version": "v1.0.1"
         },
         {
             "gh": "bids-apps/CPAC",
@@ -86,7 +86,7 @@
                 "func"
             ],
             "description": "BIDS Application for the Configurable Pipeline for the Analysis of Connectomes (C-PAC)",
-            "latest_version": "1.0.0"
+            "latest_version": "v1.0.1a_22"
         },
         {
             "gh": "bids-apps/DPARSF",
@@ -99,14 +99,14 @@
                 "func"
             ],
             "description": "Docker version of DPARSF, also deployed at OpenNeuro.org",
-            "latest_version": "1.0.0"
+            "latest_version": "unstable"
         },
         {
             "gh": "bids-apps/example",
             "status": "active",
             "dh": "bids/example",
             "description": "This an example app that can serve as a template.",
-            "latest_version": "1.0.0"
+            "latest_version": "unstable"
         },
         {
             "gh": "bids-apps/freesurfer",
@@ -119,7 +119,7 @@
                 "func"
             ],
             "description": "BIDS app wrapping recon-all from FreeSurfer",
-            "latest_version": "1.0.0"
+            "latest_version": "7-unstable"
         },
         {
             "gh": "bids-apps/giga_connectome",
@@ -135,7 +135,7 @@
                 "func"
             ],
             "description": "This is a BIDS-App to extract signal from a parcellation with nilearn, typically useful in a context of resting-state data processing.",
-            "latest_version": "1.0.0"
+            "latest_version": "unstable"
         },
         {
             "gh": "bids-apps/HCPPipelines",
@@ -150,7 +150,7 @@
                 "dwi"
             ],
             "description": "A BIDS App for minimal preprocessing using the HCP Pipelines",
-            "latest_version": "1.0.0"
+            "latest_version": "latest"
         },
         {
             "gh": "bids-apps/hyperalignment",
@@ -163,7 +163,7 @@
                 "func"
             ],
             "description": "Hyperalignment is a functional alignment method that aligns subjects' brain data in a high-dimensional space of voxels/features.",
-            "latest_version": "1.0.0"
+            "latest_version": "latest"
         },
         {
             "gh": "bids-apps/MAGeTbrain",
@@ -176,7 +176,7 @@
                 "anat"
             ],
             "description": null,
-            "latest_version": "1.0.0"
+            "latest_version": "v0.3.1"
         },
         {
             "gh": "bids-apps/mindboggle",
@@ -189,7 +189,7 @@
                 "anat"
             ],
             "description": "Improve the accuracy, precision, and consistency of automated labeling and shape analysis of human brain image data",
-            "latest_version": "1.0.0"
+            "latest_version": "0.0.4-1"
         },
         {
             "gh": "bids-apps/MRtrix3_connectome",
@@ -203,7 +203,7 @@
                 "dwi"
             ],
             "description": "Generate subject connectomes from raw BIDS data & perform inter-subject connection density normalization, using  the MRtrix3 software package.",
-            "latest_version": "1.0.0"
+            "latest_version": "latest"
         },
         {
             "gh": "bids-apps/ndmg",
@@ -217,7 +217,7 @@
                 "dwi"
             ],
             "description": "BIDS app for NeuroData's MRI to Graphs pipeline",
-            "latest_version": "1.0.0"
+            "latest_version": "v0.1.0"
         },
         {
             "gh": "bids-apps/nipypelines",
@@ -230,7 +230,7 @@
                 "func"
             ],
             "description": "Preprocess functional tasks in a BIDS dataset.",
-            "latest_version": "1.0.0"
+            "latest_version": "0.3.0"
         },
         {
             "gh": "bids-apps/oppni",
@@ -243,7 +243,7 @@
                 "func"
             ],
             "description": "runs fast optimization of preprocessing pipelines for BOLD fMRI",
-            "latest_version": "1.0.0"
+            "latest_version": "v0.7.0-1"
         },
         {
             "gh": "bids-apps/PyMVPA",
@@ -256,7 +256,7 @@
                 "func"
             ],
             "description": "runs MVPA and RSA analysis BIDS bold derivative data",
-            "latest_version": "1.0.0"
+            "latest_version": "v2.0.2"
         },
         {
             "gh": "bids-apps/QAP",
@@ -270,7 +270,7 @@
                 "func"
             ],
             "description": "PCP Quality Assessment Protocol",
-            "latest_version": "1.0.0"
+            "latest_version": "v2.0.2"
         },
         {
             "gh": "bids-apps/rsHRF",
@@ -284,7 +284,7 @@
             ],
             "comment": "does not run on typical fmriprep data",
             "description": "Resting state HRF estimation from BOLD-fMRI signal",
-            "latest_version": "1.0.0"
+            "latest_version": "1.5.8"
         },
         {
             "gh": "bids-apps/SPM",
@@ -295,7 +295,7 @@
                 "derivative"
             ],
             "description": "BIDS App containing an instance of the SPM software.",
-            "latest_version": "1.0.0"
+            "latest_version": "unstable"
         },
         {
             "gh": "bids-apps/tracula",
@@ -308,7 +308,7 @@
                 "dwi"
             ],
             "description": "implements Freesurfer's TRACULA (TRActs Constrained by UnderLying Anatomy) tool for cross-sectional as well as longitudinal (multi session) input data.",
-            "latest_version": "1.0.0"
+            "latest_version": "v6.0.0-5"
         },
         {
             "gh": "bids-apps/aa",
@@ -319,7 +319,7 @@
                 "derivative"
             ],
             "description": "BIDS App containing an instance of the Automatic Analysis",
-            "latest_version": "1.0.0"
+            "latest_version": "v0.2.0"
         },
         {
             "gh": "bids-apps/FibreDensityAndCrosssection",
@@ -332,14 +332,14 @@
                 "dmri"
             ],
             "description": null,
-            "latest_version": "1.0.0"
+            "latest_version": "v0.0.1"
         },
         {
             "gh": "bids-apps/niak",
             "status": "unmaintained",
             "dh": "bids/niak",
             "description": "Pipeline for preprocessing of fMRI and structural MRI scans",
-            "latest_version": "1.0.0"
+            "latest_version": "latest"
         },
         {
             "gh": "bids-apps/rs_signal_extract",
@@ -352,7 +352,7 @@
                 "func"
             ],
             "description": "BIDS App for resting state signal extraction using nilearn.",
-            "latest_version": "1.0.0"
+            "latest_version": "unstable"
         },
         {
             "gh": "cpp-lln-lab/bidsMReye",
@@ -368,7 +368,7 @@
                 "func"
             ],
             "description": "BIDS app using deepMReye to decode eye motion for fMRI time series data.",
-            "latest_version": "1.0.0"
+            "latest_version": "unstable"
         },
         {
             "gh": "cpp-lln-lab/bidspm",
@@ -386,7 +386,7 @@
                 "func"
             ],
             "description": "an SPM centric BIDS app",
-            "latest_version": "1.0.0"
+            "latest_version": "unstable"
         },
         {
             "gh": "djarecka/fmriprep-fake",
@@ -401,7 +401,7 @@
             ],
             "ci": "none",
             "description": null,
-            "latest_version": "1.0.0"
+            "latest_version": "0.1.0"
         },
         {
             "gh": "khanlab/funcmasker-flex",
@@ -417,7 +417,7 @@
                 "func"
             ],
             "description": "BIDS App for U-net brain masking of fetal bold MRI",
-            "latest_version": "1.0.0"
+            "latest_version": "update-deps"
         },
         {
             "gh": "trendscenter/gift-bids",
@@ -425,7 +425,7 @@
             "dh": "trends/gift-bids",
             "ci": "none",
             "description": null,
-            "latest_version": "1.0.0"
+            "latest_version": "v4.0.5.3"
         },
         {
             "gh": "khanlab/hippunfold",
@@ -439,7 +439,7 @@
             ],
             "ci": "none",
             "description": "BIDS App for Hippunfold (automated hippocampal unfolding and subfield segmentation)",
-            "latest_version": "1.0.0"
+            "latest_version": "latest"
         },
         {
             "gh": "MICA-MNI/micapipe",
@@ -456,7 +456,7 @@
             ],
             "ci": "none",
             "description": "micapipe from the Multimodal imaging and connectome analysis lab (https://mica-mni.github.io) at the Montreal Neurological Institute. Read The Docs documentation below",
-            "latest_version": "1.0.0"
+            "latest_version": "v0.2.3"
         },
         {
             "gh": "nipreps/fmriprep",
@@ -470,7 +470,7 @@
                 "func"
             ],
             "description": "fMRIPrep is a robust and easy-to-use pipeline for preprocessing of diverse fMRI data. The transparent workflow dispenses of manual intervention, thereby ensuring the reproducibility of the results.",
-            "latest_version": "1.0.0"
+            "latest_version": "unstable"
         },
         {
             "gh": "nipreps/dmriprep",
@@ -484,7 +484,7 @@
                 "dwi"
             ],
             "description": "dMRIPrep is a robust and easy-to-use pipeline for preprocessing of diverse dMRI data. The transparent workflow dispenses of manual intervention, thereby ensuring the reproducibility of the results.",
-            "latest_version": "1.0.0"
+            "latest_version": "unstable"
         },
         {
             "gh": "nipreps/mriqc",
@@ -498,7 +498,7 @@
                 "func"
             ],
             "description": "Automated Quality Control and visual reports for Quality Assessment of structural (T1w, T2w) and functional MRI of the brain",
-            "latest_version": "1.0.0"
+            "latest_version": "25.0.0rc0"
         },
         {
             "gh": "nipreps/nibabies",
@@ -512,7 +512,7 @@
                 "func"
             ],
             "description": "Processing tools for magnetic resonance images of infant brains",
-            "latest_version": "1.0.0"
+            "latest_version": "25.0.1"
         },
         {
             "gh": "nipreps/nirodents",
@@ -526,7 +526,7 @@
                 "func"
             ],
             "description": null,
-            "latest_version": "1.0.0"
+            "latest_version": "0.2.1"
         },
         {
             "gh": "nipreps/smriprep",
@@ -536,7 +536,7 @@
                 "raw"
             ],
             "description": "Structural MRI PREProcessing (sMRIPrep) workflows for NIPreps (NeuroImaging PREProcessing tools)",
-            "latest_version": "1.0.0"
+            "latest_version": "unstable"
         },
         {
             "gh": "nipreps/fmripost-aroma",
@@ -549,7 +549,7 @@
                 "func"
             ],
             "description": "Functional MRI postprocessing with ICA-AROMA",
-            "latest_version": "1.0.0"
+            "latest_version": "main"
         },
         {
             "gh": "nipreps/fmripost-phase",
@@ -562,7 +562,7 @@
                 "func"
             ],
             "description": "Postprocessing of complex-valued fMRI data",
-            "latest_version": "1.0.0"
+            "latest_version": "main"
         },
         {
             "gh": "nipreps/fmripost-rapidtide",
@@ -575,7 +575,7 @@
                 "func"
             ],
             "description": "Functional MRI postprocessing with Rapidtide",
-            "latest_version": "1.0.0"
+            "latest_version": "main"
         },
         {
             "gh": "PeerHerholz/BIDSonym",
@@ -590,7 +590,7 @@
                 "anat"
             ],
             "description": "a BIDS app for pseudo-anonymization of neuroimaging data",
-            "latest_version": "1.0.0"
+            "latest_version": "latest"
         },
         {
             "gh": "PennLINC/aslprep",
@@ -605,7 +605,7 @@
             ],
             "ci": "circleci",
             "branch": "main",
-            "latest_version": "1.0.0"
+            "latest_version": "unstable"
         },
         {
             "gh": "PennLINC/xcp_d",
@@ -620,7 +620,7 @@
             ],
             "ci": "circleci",
             "branch": "main",
-            "latest_version": "1.0.0"
+            "latest_version": "unstable"
         },
         {
             "gh": "PennLINC/qsiprep",
@@ -635,7 +635,7 @@
             "description": "Preprocessing of diffusion MRI",
             "ci": "circleci",
             "branch": "master",
-            "latest_version": "1.0.0"
+            "latest_version": "0.24.0"
         },
         {
             "gh": "PennLINC/qsirecon",
@@ -650,7 +650,7 @@
             "description": "Reconstruction of preprocessed diffusion MRI",
             "ci": "circleci",
             "branch": "main",
-            "latest_version": "1.0.0"
+            "latest_version": "unstable"
         },
         {
             "gh": "poldracklab/fitlins",
@@ -664,7 +664,7 @@
                 "func"
             ],
             "description": "Fit Linear Models to BIDS Datasets",
-            "latest_version": "1.0.0"
+            "latest_version": "dev"
         },
         {
             "gh": "reprostat/reproa",
@@ -680,7 +680,7 @@
                 "func"
             ],
             "description": "BIDS App containing an instance of the ReproAnalysis (reproa) software (core only) running under Octave with minimum dependencies.",
-            "latest_version": "1.0.0"
+            "latest_version": "latest"
         },
         {
             "gh": "connectomicslab/connectomemapper3",
@@ -697,7 +697,7 @@
                 "eeg"
             ],
             "description": "Connectome Mapper 3 is a BIDS App that implements full anatomical, diffusion, resting/state functional MRI, and recently EEG processing pipelines, from raw T1 / DWI / BOLD , and preprocessed EEG data to multi-resolution brain parcellation with corresponding connection matrices.",
-            "latest_version": "1.0.0"
+            "latest_version": "v3.2.0"
         },
         {
             "gh": "sebastientourbier/multiscalebrainparcellator",
@@ -710,14 +710,14 @@
                 "anat"
             ],
             "description": "Multi-Scale Brain Parcellator, part of the Connectome Mapping Toolkit (CMTK), is a BIDS App that implements a full anatomical MRI processing pipeline, from raw T1w data to structural brain parcellation at five different scales.",
-            "latest_version": "1.0.0"
+            "latest_version": "v1.1.1"
         },
         {
             "gh": "Medical-Image-Analysis-Laboratory/mialsuperresolutiontoolkit",
             "status": "active",
             "dh": "sebastientourbier/mialsuperresolutiontoolkit",
             "description": "The Medical Image Analysis Laboratory Super-Resolution ToolKit (MIALSRTK) consists of a set of C++ and Python processing and workflow tools necessary to perform motion-robust super-resolution fetal MRI reconstruction in the BIDS Apps framework.",
-            "latest_version": "1.0.0"
+            "latest_version": "v2.1.0"
         },
         {
             "gh": "DCAN-Labs/BIBSnet",
@@ -727,7 +727,7 @@
                 "anat"
             ],
             "description": "Utility for creating a nnU-Net anatomical MRI segmentation and mask with a infant brain trained model for the purposes of circumventing JLF within Nibabies.",
-            "latest_version": "1.0.0"
+            "latest_version": "release-3.4.2"
         },
         {
             "gh": "openneuropet/petdeface",
@@ -741,7 +741,7 @@
             "branch": "main",
             "ci": "aws_codebuild",
             "badge": "https://codebuild.us-east-1.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiYzdXV0tYSkQzTVNkcG04cHA2S055UXlKRlZTU1VONThUMVRoZVcwU3l1aHFhdVBlNDNaRGVCYzdWM1Q0WjYzQ1lRU2ZTSHpmSERPWFRkVXVyb3k3RTZBPSIsIml2UGFyYW1ldGVyU3BlYyI6IjRCZFFIQnNGT2lKcDA1VG4iLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=main",
-            "latest_version": "1.0.0"
+            "latest_version": "latest"
         }
     ]
 }

@@ -11,10 +11,18 @@ Bridge BIDS data and pipeline
 
 ## OpenAPI (Draft)
 
-[OpenAPI-client-stub.rest](./OpenAPI-client-stub.rest)
+[OpenAPI-Client-Stub](./client-stub.rest)
 
-## Data Provider
+## Public Resources
 
-### OpenNeuro
+### OpenNeuro Dataset
 
-Scraper: https://colab.research.google.com/drive/15zr9x_tYsGrjU3RUvSrNsTI5PaCdpxGh#scrollTo=10UsHTCvTJmG
+[Scraper Code](src/main/resources/openneuro/openneuro-scrap.ipynb)
+
+<!-- [![Open in Codelab](https://img.shields.io/badge/Open%20in%20Codelab-blue)](https://colab.research.google.com/drive/15zr9x_tYsGrjU3RUvSrNsTI5PaCdpxGh#scrollTo=10UsHTCvTJmG) -->
+
+### BIDS Apps
+
+[Scraper Code](src/main/resources/bids-apps/bids-apps-scrap.ipynb)
+
+<!-- [![Open in Codelab](https://img.shields.io/badge/Open%20in%20Codelab-blue)](https://colab.research.google.com/drive/15zr9x_tYsGrjU3RUvSrNsTI5PaCdpxGh#scrollTo=10UsHTCvTJmG) -->
