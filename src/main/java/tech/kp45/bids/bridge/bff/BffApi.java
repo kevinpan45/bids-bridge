@@ -23,6 +23,8 @@ import tech.kp45.bids.bridge.dataset.Dataset;
 import tech.kp45.bids.bridge.dataset.DatasetService;
 import tech.kp45.bids.bridge.dataset.accessor.BidsDataset;
 import tech.kp45.bids.bridge.dataset.accessor.provider.MinioBidsAccessor;
+import tech.kp45.bids.bridge.pipeline.Pipeline;
+import tech.kp45.bids.bridge.pipeline.PipelineService;
 import tech.kp45.bids.bridge.storage.Storage;
 import tech.kp45.bids.bridge.storage.StorageService;
 
@@ -176,5 +178,13 @@ public class BffApi {
         }
 
         return files;
+    }
+
+    @Autowired
+    private PipelineService pipelineService;
+
+    @GetMapping("/api/pipelines")
+    public List<Pipeline> listPipelines() {
+        return pipelineService.list();
     }
 }
