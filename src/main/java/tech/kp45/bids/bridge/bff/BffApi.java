@@ -1,5 +1,7 @@
 package tech.kp45.bids.bridge.bff;
 
+import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
 import tech.kp45.bids.bridge.common.exception.BasicRuntimeException;
 import tech.kp45.bids.bridge.dataset.Dataset;
@@ -58,6 +62,18 @@ public class BffApi {
         return storage;
     }
 
+    @GetMapping("/api/storages/{id}/status")
+    public boolean getStorageStatus(@PathVariable Integer id) {
+        Storage storage = storageService.find(id);
+        if (storage == null) {
+            log.error("Storage {} not found", id);
+            throw new BasicRuntimeException("Storage not found");
+        }
+
+        MinioBidsAccessor accessor = new MinioBidsAccessor(storage);
+        return accessor.available();
+    }
+
     @GetMapping("/api/storages/{id}/datasets")
     public List<Dataset> listStorageBids(@PathVariable Integer id) {
         Storage storage = storageService.find(id);
@@ -98,10 +114,33 @@ public class BffApi {
             dataset.setStorageId(id);
             if (!datasetService.exist(dataset.getName(), dataset.getVersion())) {
                 datasetService.create(dataset);
+                datasets.add(dataset);
             }
-            datasets.add(dataset);
         }
+        log.info("Load {} datasets from storage {}", datasets.size(), storage);
         return datasets.size();
+    }
+
+    @GetMapping("/api/datasets/{id}")
+    public Dataset getDataset(@PathVariable Integer id) {
+        return datasetService.get(id);
+    }
+
+    @GetMapping("/api/datasets/{id}/descriptions")
+    public JSONObject getDatasetDescription(@PathVariable Integer id) {
+        Dataset dataset = datasetService.get(id);
+        if (dataset == null) {
+            throw new BasicRuntimeException("Dataset not found");
+        }
+        Integer storageId = dataset.getStorageId();
+        Storage storage = storageService.find(storageId);
+        if (storage == null) {
+            log.error("Storage {} not found", storageId);
+            throw new BasicRuntimeException("Storage not found");
+        }
+        MinioBidsAccessor accessor = new MinioBidsAccessor(storage);
+        File file = accessor.getDescriptorFile(dataset.getStoragePath());
+        return JSONUtil.readJSONObject(file, StandardCharsets.UTF_8);
     }
 
     @GetMapping("/api/datasets/{id}/files")
