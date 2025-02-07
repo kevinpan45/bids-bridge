@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import cn.hutool.core.io.FileUtil;
 import lombok.extern.slf4j.Slf4j;
 import tech.kp45.bids.bridge.common.exception.BasicRuntimeException;
-import tech.kp45.bids.bridge.dataset.Dataset;
 
 @Slf4j
 @Service
@@ -23,6 +22,16 @@ public abstract class BidsStorageAccessor {
     public static final String BIDS_DESCRIPTION_FILE_NAME = "dataset_description.json";
 
     public abstract Operator getOperator();
+
+    public boolean available() {
+        try {
+            getOperator().stat("/");
+            return true;
+        } catch (OpenDALException e) {
+            log.error("Failed to access the storage", e);
+            return false;
+        }
+    }
 
     /**
      * Scan BIDS datasets under the storage
