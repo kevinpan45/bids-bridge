@@ -20,8 +20,8 @@ public class Pipeline {
     private String name;
     @TableField("version")
     private String version;
-    @TableField("workflow_id")
-    private Integer workflowId;
+    @TableField("workflow")
+    private String workflow;
     @TableField("created_at")
     private Date createdAt;
     @TableField("updated_at")
