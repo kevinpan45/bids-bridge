@@ -9,8 +9,8 @@ import org.springframework.util.StringUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import tech.kp45.bids.bridge.job.Job;
+import tech.kp45.bids.bridge.job.JobService;
 import tech.kp45.bids.bridge.job.JobStatus;
-import tech.kp45.bids.bridge.job.service.JobService;
 
 /**
  * Observe the status change of running jobs, update job status if job is finished/failed/timeout/missing.

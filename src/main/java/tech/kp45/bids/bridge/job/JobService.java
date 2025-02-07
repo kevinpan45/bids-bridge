@@ -1,4 +1,4 @@
-package tech.kp45.bids.bridge.job.service;
+package tech.kp45.bids.bridge.job;
 
 import java.util.List;
 
@@ -11,9 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import tech.kp45.bids.bridge.common.exception.BasicRuntimeException;
 import tech.kp45.bids.bridge.dataset.Dataset;
 import tech.kp45.bids.bridge.dataset.DatasetService;
-import tech.kp45.bids.bridge.job.Job;
-import tech.kp45.bids.bridge.job.JobMapper;
-import tech.kp45.bids.bridge.job.JobStatus;
 import tech.kp45.bids.bridge.job.scheduler.JobEngine;
 import tech.kp45.bids.bridge.pipeline.Pipeline;
 import tech.kp45.bids.bridge.pipeline.PipelineService;

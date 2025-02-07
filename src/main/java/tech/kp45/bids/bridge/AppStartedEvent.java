@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import tech.kp45.bids.bridge.dataset.Dataset;
 import tech.kp45.bids.bridge.dataset.DatasetService;
 import tech.kp45.bids.bridge.job.Job;
-import tech.kp45.bids.bridge.job.service.JobService;
+import tech.kp45.bids.bridge.job.JobService;
 import tech.kp45.bids.bridge.pipeline.Pipeline;
 import tech.kp45.bids.bridge.pipeline.PipelineService;
 import tech.kp45.bids.bridge.storage.Storage;
