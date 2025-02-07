@@ -4,8 +4,11 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+
+import tech.kp45.bids.bridge.common.exception.BasicRuntimeException;
 
 @Service
 public class DatasetService {
@@ -32,8 +35,14 @@ public class DatasetService {
     }
 
     public boolean exist(String name, String version) {
+        if (!StringUtils.hasText(name)) {
+            throw new BasicRuntimeException("Dataset name is required");
+        }
         LambdaQueryWrapper<Dataset> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(Dataset::getName, name).eq(Dataset::getVersion, version);
+        queryWrapper.eq(Dataset::getName, name);
+        if (StringUtils.hasText(version)) {
+            queryWrapper.eq(Dataset::getVersion, version);
+        }
         return datasetMapper.selectCount(queryWrapper) > 0;
     }
 
