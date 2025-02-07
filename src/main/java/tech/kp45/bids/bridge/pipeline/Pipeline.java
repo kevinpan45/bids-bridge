@@ -22,6 +22,8 @@ public class Pipeline {
     private String version;
     @TableField("workflow")
     private String workflow;
+    @TableField("description")
+    private String description;
     @TableField("created_at")
     private Date createdAt;
     @TableField("updated_at")

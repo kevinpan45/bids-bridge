@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import cn.hutool.core.io.resource.ResourceUtil;
+import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -183,8 +185,33 @@ public class BffApi {
     @Autowired
     private PipelineService pipelineService;
 
+    @PutMapping("/api/pipelines/collections")
+    public void importBidsApps() {
+        String content = ResourceUtil.readStr("bids-apps/bids-apps.json", StandardCharsets.UTF_8);
+        JSONObject json = JSONUtil.parseObj(content);
+        JSONArray apps = json.getJSONArray("apps");
+        apps.forEach(item -> {
+            JSONObject app = (JSONObject) item;
+            String version = app.getStr("latest_version");
+            String workflow = app.getStr("dh") + ":" + version;
+            if (pipelineService.findByWorkflow(workflow) == null) {
+                Pipeline pipeline = new Pipeline();
+                pipeline.setName(app.getStr("gh"));
+                pipeline.setVersion(version);
+                pipeline.setWorkflow(workflow);
+                pipeline.setDescription(app.getStr("description"));
+                pipelineService.create(pipeline);
+            }
+        });
+    }
+
     @GetMapping("/api/pipelines")
     public List<Pipeline> listPipelines() {
         return pipelineService.list();
+    }
+
+    @GetMapping("/api/pipelines/{id}")
+    public Pipeline getPipeline(@PathVariable Integer id) {
+        return pipelineService.get(id);
     }
 }
