@@ -14,6 +14,7 @@ public class BidsDescription {
     private String bidsVersion;
     private String datasetType;
     private String license;
+    private String doi;
 
     public BidsDescription(String content) {
         this.content = content;
@@ -23,6 +24,7 @@ public class BidsDescription {
             this.bidsVersion = contentJson.getStr("BIDSVersion");
             this.datasetType = contentJson.getStr("DatasetType");
             this.license = contentJson.getStr("License");
+            this.doi = contentJson.getStr("DatasetDOI");
         } else {
             throw new BasicRuntimeException("Dataset description file dataset_description.json is not valid");
         }
@@ -34,6 +36,7 @@ public class BidsDescription {
         bidsDataset.setBidsVersion(this.bidsVersion);
         // Suitable for OpenNeuro
         bidsDataset.setVersion(this.contentJson.getStr("Version"));
+        bidsDataset.setDoi(doi);
         return bidsDataset;
     }
 

@@ -13,7 +13,7 @@ public class BidsDataset {
     /**
      * The unique identifier of the dataset for platform management
      */
-    private String uid;
+    private String doi;
     /**
      * The relative path of the dataset in the object storage bucket and root path
      */
@@ -39,6 +39,7 @@ public class BidsDataset {
         dataset.setName(name);
         dataset.setVersion(version);
         dataset.setStoragePath(storagePath);
+        dataset.setDoi(doi);
         return dataset;
     }
 }

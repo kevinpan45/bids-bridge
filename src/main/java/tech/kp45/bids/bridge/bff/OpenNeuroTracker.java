@@ -66,7 +66,7 @@ public class OpenNeuroTracker {
             log.error("Failed to scan files for BIDS dataset {} : {}", bids.getStoragePath(), e.getMessage());
             return;
         }
-        String bidsFilesKey = "bids:dataset:openneuro:tracking:" + bids.getUid() + ":" + bids.getVersion() + ":files:";
+        String bidsFilesKey = "bids:dataset:openneuro:tracking:" + bids.getDoi() + ":" + bids.getVersion() + ":files:";
         files.stream().forEach(file -> {
             String filename = StringUtils.getFilename(file);
             String fileKey = bidsFilesKey + filename;

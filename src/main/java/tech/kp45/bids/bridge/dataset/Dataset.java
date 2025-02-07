@@ -20,6 +20,8 @@ public class Dataset {
     private String name;
     @TableField("version")
     private String version;
+    @TableField("doi")
+    private String doi;
     @TableField("storage_id")
     private Integer storageId;
     @TableField("storage_path")
