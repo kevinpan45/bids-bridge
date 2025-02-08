@@ -55,6 +55,12 @@ public class ArgoSdk {
         return workflows;
     }
 
+    public String getWorkflowStatus(String workflow) {
+        String url = serverUrl + "/api/v1/workflows/" + namespace + "/" + workflow;
+        String body = getClient(url, Method.GET).execute().body();
+        return JSONUtil.parseObj(body).getJSONObject("status").getStr("phase");
+    }
+
     public List<String> listWorkflowTemplate() {
         List<String> workflowTemplates = new ArrayList<>();
         String body = getClient(serverUrl + "/api/v1/workflow-templates/" + namespace, Method.GET).execute().body();
@@ -113,5 +119,10 @@ public class ArgoSdk {
             request.bearerAuth(token);
         }
         return request;
+    }
+
+    public boolean workflowTemplateExist(String workflow) {
+        List<String> templates = listWorkflowTemplate();
+        return templates.contains(workflow);
     }
 }
