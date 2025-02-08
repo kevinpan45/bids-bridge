@@ -40,6 +40,8 @@ public class JobService {
         }
 
         job.setName(name).setGroup(group).setPipelineId(pipelineId).setDatasetId(datasetId);
+        // TODO: Read from JWT in security context
+        job.setCreatedBy("KP45");
         jobMapper.insert(job);
 
         log.info("Job {} of group {} with pipeline {} and dataset {} created", job.getName(), job.getGroup(),
@@ -120,5 +122,9 @@ public class JobService {
 
     public List<Job> list() {
         return jobMapper.selectList(null);
+    }
+
+    public Job get(Integer id) {
+        return jobMapper.selectById(id);
     }
 }
