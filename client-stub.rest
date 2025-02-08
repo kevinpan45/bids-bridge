@@ -51,3 +51,27 @@ GET http://127.0.0.1:8080/api/pipelines HTTP/1.1
 ###
 
 GET http://127.0.0.1:8080/api/pipelines/1 HTTP/1.1
+
+###
+
+POST http://127.0.0.1:8080/api/jobs?name=test&group=test&pipelineId=57&datasetId=2 HTTP/1.1
+
+###
+
+GET http://127.0.0.1:8080/api/jobs HTTP/1.1
+
+###
+
+GET http://127.0.0.1:8080/api/jobs/1 HTTP/1.1
+
+###
+
+POST http://127.0.0.1:8080/api/jobs/1/scheduling HTTP/1.1
+
+###
+
+GET http://127.0.0.1:8080/api/jobs/1/artifacts HTTP/1.1
+
+###
+
+PUT http://127.0.0.1:8080/api/jobs/1/artifacts HTTP/1.1

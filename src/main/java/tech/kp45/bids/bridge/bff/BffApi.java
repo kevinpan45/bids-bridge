@@ -12,7 +12,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import cn.hutool.core.io.resource.ResourceUtil;
@@ -25,6 +27,10 @@ import tech.kp45.bids.bridge.dataset.Dataset;
 import tech.kp45.bids.bridge.dataset.DatasetService;
 import tech.kp45.bids.bridge.dataset.accessor.BidsDataset;
 import tech.kp45.bids.bridge.dataset.accessor.provider.MinioBidsAccessor;
+import tech.kp45.bids.bridge.job.Job;
+import tech.kp45.bids.bridge.job.JobService;
+import tech.kp45.bids.bridge.job.artifact.Artifact;
+import tech.kp45.bids.bridge.job.artifact.ArtifactService;
 import tech.kp45.bids.bridge.pipeline.Pipeline;
 import tech.kp45.bids.bridge.pipeline.PipelineService;
 import tech.kp45.bids.bridge.storage.Storage;
@@ -213,5 +219,56 @@ public class BffApi {
     @GetMapping("/api/pipelines/{id}")
     public Pipeline getPipeline(@PathVariable Integer id) {
         return pipelineService.get(id);
+    }
+
+    @Autowired
+    private JobService jobService;
+
+    @PostMapping("/api/jobs")
+    public Job createJob(@RequestParam String name, @RequestParam(required = false) String group,
+            @RequestParam Integer pipelineId,
+            @RequestParam Integer datasetId) {
+        Job job = jobService.create(name, group, pipelineId, datasetId);
+        log.info("Job {} with pipeline for dataset {} created", job.getId(), job.getPipelineId(), job.getDatasetId());
+        return job;
+    }
+
+    @GetMapping("/api/jobs")
+    public List<Job> listJobs() {
+        return jobService.list();
+    }
+
+    @GetMapping("/api/jobs/{id}")
+    public Job getJob(@PathVariable Integer id) {
+        return jobService.get(id);
+    }
+
+    @PostMapping("/api/jobs/{id}/scheduling")
+    public void scheduleJob(@PathVariable Integer id) {
+        jobService.schedule(id);
+    }
+
+    @Autowired
+    private ArtifactService artifactService;
+
+    @GetMapping("/api/jobs/{id}/artifacts")
+    public Artifact getJobArtifact(@PathVariable Integer id) {
+        return artifactService.findByJob(id);
+    }
+
+    @PutMapping("/api/jobs/{id}/artifacts")
+    public Artifact updateJobArtifact(@PathVariable Integer id) {
+        Job job = jobService.get(id);
+        if (job == null) {
+            throw new BasicRuntimeException("Job not found");
+        }
+        Artifact artifact = artifactService.findByJob(id);
+        if (artifact == null) {
+            artifact = new Artifact();
+            artifact.setJobId(id);
+            artifact.setStoragePath(job.getEngineJobId());
+            artifactService.create(artifact);
+        }
+        return artifact;
     }
 }
