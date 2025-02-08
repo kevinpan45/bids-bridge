@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -50,6 +51,11 @@ public class BffApi {
     @Autowired
     private DatasetService datasetService;
 
+    @PostMapping("/api/storages")
+    public void addStorage(@RequestBody Storage storage) {
+        storageService.create(storage);
+    }
+
     @GetMapping("/api/storages")
     public List<Storage> listBidsStorage() {
         List<Storage> storages = storageService.list();
@@ -70,6 +76,12 @@ public class BffApi {
             storage.setSecretKey(null);
         }
         return storage;
+    }
+
+    @PutMapping("/api/storages/{id}")
+    public void updateStorage(@PathVariable Integer id, @RequestBody Storage storage) {
+        storage.setId(id);
+        storageService.update(storage);
     }
 
     @GetMapping("/api/storages/{id}/status")
