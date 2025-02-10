@@ -1,0 +1,68 @@
+name: "BIDS Bridge"
+version: "3.8"
+
+services:
+  bids-bridge:
+    image: ghcr.io/kevinpan45/bids-bridge:latest
+    container_name: bids-bridge
+    # ports:
+    #   - "8080:8080"
+    environment:
+      - MYSQL_HOST=mysql
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=password
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - KAFKA_SERVER=kafka:9092
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_ACCESS_KEY=admin
+      - MINIO_SECRET_KEY=password
+    networks:
+      - bids-bridge
+    depends_on:
+      - mysql
+      - redis
+      - kafka
+      - minio
+  mysql:
+    image: mysql
+    container_name: bids-bridge-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: "password"
+      MYSQL_ROOT_HOST: "%"
+    volumes:
+      - /data/local-stack/bids-bridge/mysql:/var/lib/mysql
+    restart: "unless-stopped"
+    networks:
+      - bids-bridge
+  redis:
+    image: redis
+    container_name: bids-bridge-redis
+    restart: "unless-stopped"
+    networks:
+      - bids-bridge
+  kafka:
+    image: apache/kafka:3.9.0
+    container_name: bids-bridge-kafka
+    volumes:
+      - /data/local-stack/bids-bridge/kafka/data:/var/lib/kafka/data
+      - /data/local-stack/bids-bridge/kafka/config/server.properties:/etc/kafka/docker/server.properties
+    restart: "unless-stopped"
+    networks:
+      - bids-bridge
+  minio:
+    image: quay.io/minio/minio
+    container_name: bids-bridge-minio
+    environment:
+      - MINIO_ROOT_USER=admin
+      - MINIO_ROOT_PASSWORD=password
+    volumes:
+      - "/data/local-stack/bids-bridge/minio/data:/data"
+    command: server /data --console-address ":9001"
+    restart: "unless-stopped"
+    networks:
+      - bids-bridge
+
+networks:
+  bids-bridge:
+    driver: bridge
