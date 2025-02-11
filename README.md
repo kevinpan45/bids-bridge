@@ -13,7 +13,7 @@ Bridge BIDS data and pipeline
 
 - ***Default credentials in [docker-compose.yml](docker-compose.yml) is weak and insecure, just for having a quick view of project.***
 
-- ***Uncomment the ports config of bids-bridge service for exposing the service API.***
+- ***Uncomment the ports config of bids-bridge and bids-bridge-ui service for exposing the service API.***
 
 ```bash
 docker-compose up
