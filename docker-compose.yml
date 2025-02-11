@@ -24,6 +24,17 @@ services:
       - redis
       - kafka
       - minio
+  bids-bridge-ui:
+    image: ghcr.io/kevinpan45/bids-bridge-ui:latest
+    container_name: bids-bridge-ui
+    # ports:
+    #   - "5173:80"
+    environment:
+      - VITE_API_SERVER=http://localhost:8080
+    networks:
+      - bids-bridge
+    depends_on:
+      - bids-bridge
   mysql:
     image: mysql
     container_name: bids-bridge-mysql
