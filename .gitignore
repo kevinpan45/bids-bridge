@@ -6,3 +6,5 @@ target/
 .env
 
 openneuro_scraper_env
+
+.venv
