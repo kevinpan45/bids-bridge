@@ -203,24 +203,12 @@ public class BffApi {
     @Autowired
     private PipelineService pipelineService;
 
+    @Autowired
+    private BidsAppsAccessor bidsAppsAccessor;
+
     @PutMapping("/api/pipelines/collections")
     public void importBidsApps() {
-        String content = ResourceUtil.readStr("bids-apps/bids-apps.json", StandardCharsets.UTF_8);
-        JSONObject json = JSONUtil.parseObj(content);
-        JSONArray apps = json.getJSONArray("apps");
-        apps.forEach(item -> {
-            JSONObject app = (JSONObject) item;
-            String version = app.getStr("latest_version");
-            String workflow = app.getStr("dh") + ":" + version;
-            if (pipelineService.findByWorkflow(workflow) == null) {
-                Pipeline pipeline = new Pipeline();
-                pipeline.setName(app.getStr("gh"));
-                pipeline.setVersion(version);
-                pipeline.setWorkflow(workflow);
-                pipeline.setDescription(app.getStr("description"));
-                pipelineService.create(pipeline);
-            }
-        });
+        bidsAppsAccessor.importBidsApps();
     }
 
     @GetMapping("/api/pipelines")
