@@ -1,4 +1,4 @@
-# bids-bridge
+# BIDS-Bridge
 
 Bridge BIDS data and pipeline
 
