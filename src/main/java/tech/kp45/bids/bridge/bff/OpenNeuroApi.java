@@ -41,11 +41,11 @@ public class OpenNeuroApi {
 
         boolean exist = openNeuroAccessor.exist(dataset + "/");
         if (exist) {
+            throw new BasicRuntimeException("Dataset is exist.");
+        } else {
             ArgoSdk argoSdk = new ArgoSdk(argoProperties);
             String workflowId = argoSdk.submit("openneuro-collector", Map.of("dataset", dataset));
             log.info("Workflow {} is submitted for dataset {} collection", workflowId, dataset);
-        } else {
-            throw new BasicRuntimeException("Dataset not found");
         }
     }
 
