@@ -13,13 +13,11 @@ services:
       - MYSQL_PASSWORD=password
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - KAFKA_SERVER=kafka:9092
     networks:
       - bids-bridge
     depends_on:
       - mysql
       - redis
-      - kafka
       - minio
   bids-bridge-ui:
     image: ghcr.io/kevinpan45/bids-bridge-ui:latest
@@ -46,15 +44,6 @@ services:
   redis:
     image: redis
     container_name: bids-bridge-redis
-    restart: "unless-stopped"
-    networks:
-      - bids-bridge
-  kafka:
-    image: apache/kafka:3.9.0
-    container_name: bids-bridge-kafka
-    volumes:
-      - /data/local-stack/bids-bridge/kafka/data:/var/lib/kafka/data
-      - /data/local-stack/bids-bridge/kafka/config/server.properties:/etc/kafka/docker/server.properties
     restart: "unless-stopped"
     networks:
       - bids-bridge
