@@ -14,17 +14,6 @@ spring:
     redis:
       host: ${REDIS_HOST}
       port: ${REDIS_PORT}
-  kafka:
-    bootstrap-servers:
-      - ${KAFKA_SERVER}
-    producer:
-      # at least one replica has written the data to its log, if singletons broker set acks=1
-      acks: all
-      retries: 3
-    consumer:
-      fetch-min-size: 10
-      auto-offset-reset: latest
-      enable-auto-commit: true
 
 management:
   endpoints:
@@ -44,5 +33,8 @@ bids:
     openneuro:
       sync:
         enabled: true
-        cron: 0 0 0 * * MON
-        # cron: 0 0/5 * * * ?
+        # cron: 0 0 0 * * MON
+        cron: 0 0/5 * * * ?
+      track:
+        enabled: true
+        cron: 0 0/5 * * * ?
