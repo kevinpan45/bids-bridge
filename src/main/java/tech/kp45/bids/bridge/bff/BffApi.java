@@ -18,8 +18,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import cn.hutool.core.io.resource.ResourceUtil;
-import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +30,7 @@ import tech.kp45.bids.bridge.job.Job;
 import tech.kp45.bids.bridge.job.JobService;
 import tech.kp45.bids.bridge.job.artifact.Artifact;
 import tech.kp45.bids.bridge.job.artifact.ArtifactService;
+import tech.kp45.bids.bridge.job.scheduler.argo.ArgoProperties;
 import tech.kp45.bids.bridge.pipeline.Pipeline;
 import tech.kp45.bids.bridge.pipeline.PipelineService;
 import tech.kp45.bids.bridge.storage.Storage;
@@ -270,5 +269,16 @@ public class BffApi {
             artifactService.create(artifact);
         }
         return artifact;
+    }
+
+    @Autowired
+    private ArgoProperties argoProperties;
+
+    @GetMapping("/api/settings/engines")
+    public ArgoProperties getArgoProperties() {
+        ArgoProperties properties = new ArgoProperties();
+        properties.setNamespace(argoProperties.getNamespace());
+        properties.setServerUrl(argoProperties.getServerUrl());
+        return properties;
     }
 }
