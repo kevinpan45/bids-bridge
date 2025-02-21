@@ -24,7 +24,7 @@ management:
 job:
   engine:
     argo:
-      serverUrl: https://localhost:2746
+      serverUrl: ${ARGO_WORKFLOW_SERVER:https://localhost:2746}
       namespace: argo
       token: 
 
