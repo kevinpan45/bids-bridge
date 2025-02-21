@@ -1,7 +1,6 @@
 package tech.kp45.bids.bridge.dataset.accessor.provider;
 
-import java.io.File;
-import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -12,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
-import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.io.IORuntimeException;
 import cn.hutool.core.io.resource.ResourceUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
@@ -52,14 +49,14 @@ public class OpenNeuroAccessor extends BidsStorageAccessor {
     }
 
     private List<String> loadCached(String path) {
-        File file;
+        String content;
         try {
-            file = new File(ResourceUtil.getResource(path).toURI());
-        } catch (IORuntimeException | URISyntaxException e) {
+            content = ResourceUtil.readStr(path, StandardCharsets.UTF_8);
+        } catch (Exception e) {
             log.error("Load BIDS from {} failed", path, e);
             throw new BasicRuntimeException("Load BIDS failed");
         }
-        List<String> lines = FileUtil.readUtf8Lines(file);
+        List<String> lines = content.lines().toList();
         log.info("Get {} bids from {}", lines.size(), path);
         return lines;
     }
