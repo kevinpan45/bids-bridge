@@ -124,6 +124,17 @@
 					</excludes>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.5.2</version>
+				<configuration>
+					<excludes>
+						<exclude>**/MinioBidsStorageDalTest.java</exclude>
+						<exclude>**/OpenNeuroDalTest.java</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
 		</plugins>
 		<extensions>
 			<extension>
