@@ -33,8 +33,9 @@ bids:
     openneuro:
       sync:
         enabled: true
-        # cron: 0 0 0 * * MON
-        cron: 0 0/5 * * * ?
+        cron: 0 0 0 * * MON
+        # cron: 0 0/5 * * * ?
       track:
-        enabled: true
-        cron: 0 0/5 * * * ?
+        enabled: false
+        cron: 0 0 0 * * MON
+        # cron: 0 0/5 * * * ?

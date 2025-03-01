@@ -30,11 +30,13 @@ public class OpenNeuroTracker {
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
     @Value("${bids.collector.openneuro.sync.enabled}")
-    private boolean enabled;
+    private boolean enabledSync;
+    @Value("${bids.collector.openneuro.track.enabled}")
+    private boolean enabledTrack;
 
     @Scheduled(cron = "${bids.collector.openneuro.sync.cron}")
     public void trigger() {
-        if (!enabled) {
+        if (!enabledSync) {
             return;
         }
         boolean acquired = false;
@@ -59,26 +61,44 @@ public class OpenNeuroTracker {
 
     @Scheduled(cron = "${bids.collector.openneuro.track.cron}")
     public void listenOnOpenNeuroTrackEvent() {
+        if (!enabledTrack) {
+            return;
+        }
         List<ObjectRecord<String, BidsDataset>> records = redisTemplate.opsForStream()
                 .read(BidsDataset.class, StreamOffset.fromStart(OpenNeuroAccessor.OPENNEURO_BIDS_TRACK_TOPIC));
+
+        if (records.isEmpty()) {
+            return;
+        }
+        log.info("Start to track {} BIDS datasets", records.size());
+
         records.stream().forEach(record -> {
             BidsDataset bids = record.getValue();
-            List<String> files = new ArrayList<>();
-            try {
-                accessor.scanFiles(bids.getStoragePath(), files);
-            } catch (Exception e) {
-                log.error("Failed to scan files for BIDS dataset {} : {}", bids.getStoragePath(), e.getMessage());
-                return;
-            }
             String bidsFilesKey = "bids:dataset:openneuro:tracking:" + bids.getDoi() + ":" + bids.getVersion()
                     + ":files:";
-            files.stream().forEach(file -> {
-                String filename = StringUtils.getFilename(file);
-                String fileKey = bidsFilesKey + filename;
-                if (!redisTemplate.hasKey(fileKey)) {
-                    redisTemplate.opsForValue().set(fileKey, file);
+
+            String descriptionKey = "bids:dataset:openneuro:tracking:" + bids.getDoi() + ":" + bids.getVersion()
+                    + ":files:" + OpenNeuroAccessor.BIDS_DESCRIPTION_FILE_NAME;
+            if (redisTemplate.hasKey(descriptionKey)) {
+                log.info("BIDS dataset {} already tracked", bids.getDoi());
+            } else {
+                List<String> files = new ArrayList<>();
+                try {
+                    accessor.scanFiles(bids.getStoragePath(), files);
+                } catch (Exception e) {
+                    log.error("Failed to scan files for BIDS dataset {} : {}", bids.getStoragePath(), e.getMessage());
+                    return;
                 }
-            });
+
+                files.stream().forEach(file -> {
+                    String filename = StringUtils.getFilename(file);
+                    String fileKey = bidsFilesKey + filename;
+                    if (!redisTemplate.hasKey(fileKey)) {
+                        redisTemplate.opsForValue().set(fileKey, file, 30, TimeUnit.DAYS);
+                    }
+                });
+                log.info("BIDS dataset {} tracked", bids.getDoi());
+            }
         });
     }
 }
