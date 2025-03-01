@@ -45,6 +45,8 @@ services:
     image: redis
     container_name: bids-bridge-redis
     restart: "unless-stopped"
+    volumes:
+      - /data/local-stack/bids-bridge/redis:/data
     networks:
       - bids-bridge
   minio:
