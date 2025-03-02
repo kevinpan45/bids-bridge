@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.opendal.Operator;
@@ -16,8 +17,6 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
 import tech.kp45.bids.bridge.common.exception.BasicRuntimeException;
-import tech.kp45.bids.bridge.dataset.Dataset;
-import tech.kp45.bids.bridge.dataset.DatasetService;
 import tech.kp45.bids.bridge.dataset.accessor.BidsDataset;
 import tech.kp45.bids.bridge.dataset.accessor.BidsStorageAccessor;
 
@@ -27,14 +26,11 @@ public class OpenNeuroAccessor extends BidsStorageAccessor {
 
     public static final String OPENNEURO_BIDS_TRACK_TOPIC = "openneuro.bids.track";
     private static final String BIDS_DATASET_TRACKING_PREFIX = "bids:dataset:openneuro:tracking:";
-    public static final String BIDS_DATASET_CACHE_PREFIX = "bids:openneuro:datasets:";
+    public static final String BIDS_DATASET_TACKING_KEY_PATTERN = BIDS_DATASET_TRACKING_PREFIX + "*:metadata";
     public static final String BIDS_OPENNEURO_DATASET_ARCHTYPE_PATH = "openneuro/latest.txt";
 
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
-
-    @Autowired
-    private DatasetService datasetService;
 
     private final Map<String, String> conf = Map.of(
             "region", "us-east-1",
@@ -70,29 +66,28 @@ public class OpenNeuroAccessor extends BidsStorageAccessor {
         for (String line : lines) {
             JSONObject datasetJson = JSONUtil.parseObj(line);
             BidsDataset bids = convert(datasetJson);
-            String trackingMetaKey = BIDS_DATASET_TRACKING_PREFIX + bids.getDoi() + ":" + bids.getVersion()
-                    + ":metadata";
+            String trackingMetaKey = getTrackingKey(bids.getDoi(), bids.getVersion());
             redisTemplate.opsForValue().set(trackingMetaKey, line, 1, TimeUnit.DAYS);
             bidses.add(bids);
         }
         return bidses;
     }
 
-    public List<Dataset> load() {
-        List<Dataset> datasets = new ArrayList<>();
-        String path = BIDS_OPENNEURO_DATASET_ARCHTYPE_PATH;
-        List<String> lines = loadCached(path);
-        for (String line : lines) {
-            JSONObject item = JSONUtil.parseObj(line);
-            BidsDataset bids = convert(item);
-            bids.setValid(true);
-            redisTemplate.opsForValue().set(BIDS_DATASET_CACHE_PREFIX + bids.getDoi(),
-                    JSONUtil.toJsonStr(bids), 1, TimeUnit.DAYS);
-            Dataset dataset = bids.toDataset();
-            datasetService.create(dataset);
-            datasets.add(dataset);
-        }
-        return datasets;
+    /**
+     * 
+     * @return all tracking keys for getting dataset metadata
+     */
+    public Set<String> getTrackingKeys() {
+        return redisTemplate.keys(BIDS_DATASET_TACKING_KEY_PATTERN);
+    }
+
+    public String getTrackingKey(String doi, String version) {
+        return BIDS_DATASET_TRACKING_PREFIX + doi + ":" + version + ":metadata";
+    }
+
+    public BidsDataset getTackingDataset(String key) {
+        String meta = redisTemplate.opsForValue().get(key);
+        return convert(JSONUtil.parseObj(meta));
     }
 
     private BidsDataset convert(JSONObject gqlObject) {

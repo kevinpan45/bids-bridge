@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
 import tech.kp45.bids.bridge.common.exception.BasicRuntimeException;
 import tech.kp45.bids.bridge.dataset.accessor.BidsDataset;
@@ -30,8 +28,6 @@ public class OpenNeuroApi {
     private OpenNeuroAccessor openNeuroAccessor;
     @Autowired
     private ArgoProperties argoProperties;
-    @Autowired
-    private RedisTemplate<String, String> redisTemplate;
 
     @PostMapping("/api/openneuro/{dataset}/collections")
     public void collectOpenNeuroDataset(@PathVariable String dataset) {
@@ -51,15 +47,14 @@ public class OpenNeuroApi {
 
     @GetMapping("/api/openneuro/bids")
     public List<BidsDataset> listOpenNeuroDatasets() {
-        Set<String> keys = redisTemplate.keys("bids:openneuro:datasets:*");
+        Set<String> keys = openNeuroAccessor.getTrackingKeys();
         List<BidsDataset> datasets = new ArrayList<>();
         if (keys.isEmpty()) {
             datasets = openNeuroAccessor.scan();
             log.info("Load {} datasets from local storage", datasets.size());
         } else {
             for (String key : keys) {
-                String value = redisTemplate.opsForValue().get(key);
-                datasets.add(JSONUtil.toBean(value, BidsDataset.class));
+                datasets.add(openNeuroAccessor.getTackingDataset(key));
             }
             log.info("Get {} datasets from cache", datasets.size());
         }
