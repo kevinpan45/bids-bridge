@@ -1,6 +1,8 @@
 package tech.kp45.bids.bridge.bff;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,9 +24,7 @@ public class BidsAppsAccessor {
      * Load bids apps from local registry, create pipeline in database if not exists
      */
     public void importBidsApps() {
-        String content = ResourceUtil.readStr("bids-apps/bids-apps.json", StandardCharsets.UTF_8);
-        JSONObject json = JSONUtil.parseObj(content);
-        JSONArray apps = json.getJSONArray("apps");
+        JSONArray apps = loadApps();
         apps.forEach(item -> {
             JSONObject app = (JSONObject) item;
             String version = app.getStr("latest_version");
@@ -38,5 +38,28 @@ public class BidsAppsAccessor {
                 pipelineService.create(pipeline);
             }
         });
+    }
+
+    public List<BidsApp> list() {
+        List<BidsApp> bidsApps = new ArrayList<>();
+        JSONArray apps = loadApps();
+        apps.forEach(item -> {
+            JSONObject app = (JSONObject) item;
+            String version = app.getStr("latest_version");
+            String workflow = app.getStr("dh") + ":" + version;
+            BidsApp bidsApp = new BidsApp();
+            bidsApp.setName(app.getStr("gh"));
+            bidsApp.setVersion(version);
+            bidsApp.setWorkflow(workflow);
+            bidsApp.setDescription(app.getStr("description"));
+            bidsApps.add(bidsApp);
+        });
+        return bidsApps;
+    }
+
+    private JSONArray loadApps() {
+        String content = ResourceUtil.readStr("bids-apps/bids-apps.json", StandardCharsets.UTF_8);
+        JSONObject json = JSONUtil.parseObj(content);
+        return json.getJSONArray("apps");
     }
 }

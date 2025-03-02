@@ -42,6 +42,10 @@ GET http://127.0.0.1:8080/api/openneuro/bids HTTP/1.1
 
 ###
 
+GET http://127.0.0.1:8080/api/bids-apps HTTP/1.1
+
+###
+
 PUT  http://127.0.0.1:8080/api/pipelines/collections HTTP/1.1
 
 ###
