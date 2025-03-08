@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 
 import lombok.extern.slf4j.Slf4j;
+import tech.kp45.bids.bridge.bff.JobView;
 import tech.kp45.bids.bridge.common.exception.BasicRuntimeException;
 import tech.kp45.bids.bridge.dataset.Dataset;
 import tech.kp45.bids.bridge.dataset.DatasetService;
@@ -126,5 +127,9 @@ public class JobService {
 
     public Job get(Integer id) {
         return jobMapper.selectById(id);
+    }
+
+    public List<JobView> listJobViews() {
+        return jobMapper.listJobViews();
     }
 }

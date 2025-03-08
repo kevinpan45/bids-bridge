@@ -237,6 +237,11 @@ public class BffApi {
         return jobService.list();
     }
 
+    @GetMapping("/api/bff/jobs")
+    public List<JobView> listJobViews() {
+        return jobService.listJobViews();
+    }
+
     @GetMapping("/api/jobs/{id}")
     public Job getJob(@PathVariable Integer id) {
         return jobService.get(id);
