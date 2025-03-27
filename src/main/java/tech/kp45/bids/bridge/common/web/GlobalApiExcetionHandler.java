@@ -21,8 +21,8 @@ public class GlobalApiExcetionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(BasicRuntimeException.class)
     public ResponseEntity<String> handleBusinessRuntimeError(BasicRuntimeException e) {
-        log.error("Server Internal Runtime Error", e);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("System Internal error.");
+        log.error("Server Internal Runtime Error", e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 
     @ExceptionHandler(BasicException.class)
