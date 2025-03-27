@@ -11,14 +11,18 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
 import tech.kp45.bids.bridge.common.exception.BasicRuntimeException;
 import tech.kp45.bids.bridge.dataset.accessor.BidsDataset;
+import tech.kp45.bids.bridge.dataset.accessor.provider.MinioBidsAccessor;
 import tech.kp45.bids.bridge.dataset.accessor.provider.OpenNeuroAccessor;
 import tech.kp45.bids.bridge.job.scheduler.argo.ArgoProperties;
 import tech.kp45.bids.bridge.job.scheduler.argo.ArgoSdk;
+import tech.kp45.bids.bridge.storage.Storage;
+import tech.kp45.bids.bridge.storage.StorageService;
 
 @Slf4j
 @RestController
@@ -27,15 +31,19 @@ public class OpenNeuroApi {
     @Autowired
     private OpenNeuroAccessor openNeuroAccessor;
     @Autowired
+    private StorageService storageService;
+    @Autowired
     private ArgoProperties argoProperties;
 
     @PostMapping("/api/openneuro/{dataset}/collections")
-    public void collectOpenNeuroDataset(@PathVariable String dataset) {
+    public void collectOpenNeuroDataset(@PathVariable String dataset, @RequestParam Integer storageId) {
         if (!StringUtils.hasText(dataset)) {
             throw new BasicRuntimeException("Dataset cannot be blank");
         }
 
-        boolean exist = openNeuroAccessor.exist(dataset + "/");
+        Storage storage = storageService.find(storageId);
+        MinioBidsAccessor accessor = new MinioBidsAccessor(storage);
+        boolean exist = accessor.exist(dataset + "/");
         if (exist) {
             throw new BasicRuntimeException("Dataset is exist.");
         } else {

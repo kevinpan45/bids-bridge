@@ -34,7 +34,7 @@ GET http://127.0.0.1:8080/api/datasets/1/files HTTP/1.1
 
 ###
 
-POST http://127.0.0.1:8080/api/openneuro/ds005625/collections HTTP/1.1
+POST http://127.0.0.1:8080/api/openneuro/ds000108/collections?storageId=1 HTTP/1.1
 
 ###
 
