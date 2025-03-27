@@ -34,7 +34,9 @@ public class ArgoSdk {
         if (StringUtils.hasText(token)) {
             this.token = token;
         } else {
-            log.warn("ArgoSdk is initialized without token.");
+            if (log.isDebugEnabled()) {
+                log.debug("ArgoSdk is initialized without token.");
+            }
         }
     }
 
@@ -58,7 +60,11 @@ public class ArgoSdk {
     public String getWorkflowStatus(String workflow) {
         String url = serverUrl + "/api/v1/workflows/" + namespace + "/" + workflow;
         String body = getClient(url, Method.GET).execute().body();
-        return JSONUtil.parseObj(body).getJSONObject("status").getStr("phase");
+        JSONObject jsonBody = JSONUtil.parseObj(body);
+        if (jsonBody.containsKey("code") && jsonBody.getInt("code") == 5) {
+            throw new BasicRuntimeException("Workflow " + workflow + " not found.");
+        }
+        return jsonBody.getJSONObject("status").getStr("phase");
     }
 
     public List<String> listWorkflowTemplate() {
