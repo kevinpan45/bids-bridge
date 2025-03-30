@@ -33,6 +33,7 @@ public class GlobalApiExcetionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleServerError(Exception e) {
+        log.error("Server Internal Error", e);
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE.value()).body("System Internal error.");
     }
 }
