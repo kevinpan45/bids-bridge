@@ -132,4 +132,10 @@ public class JobService {
     public List<JobView> listJobViews() {
         return jobMapper.listJobViews();
     }
+
+    public Job findByEngineJobId(String engineJobId) {
+        LambdaQueryWrapper<Job> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Job::getEngineJobId, engineJobId);
+        return jobMapper.selectOne(queryWrapper);
+    }
 }
