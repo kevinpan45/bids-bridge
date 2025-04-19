@@ -1,6 +1,6 @@
-package tech.kp45.bids.bridge.iam.service;
+package tech.kp45.bids.bridge.iam;
 
-import java.security.PrivateKey;
+import java.security.KeyPair;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,6 @@ import cn.hutool.jwt.JWT;
 import cn.hutool.jwt.signers.JWTSigner;
 import cn.hutool.jwt.signers.JWTSignerUtil;
 import tech.kp45.bids.bridge.common.exception.BasicRuntimeException;
-import tech.kp45.bids.bridge.common.security.LocalPublicKeyResourceLoader;
 import tech.kp45.bids.bridge.iam.entity.Role;
 import tech.kp45.bids.bridge.iam.entity.User;
 import tech.kp45.bids.bridge.iam.entity.UserRole;
@@ -29,6 +28,9 @@ public class UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private KeyPair keyPair;
 
     public void registerUser(String username, String rawPassword) {
         if (userMapper.findByUsername(username) != null) {
@@ -61,9 +63,7 @@ public class UserService {
     }
 
     private String createJwt(User user) {
-        PrivateKey privateKey = LocalPublicKeyResourceLoader.getPrivateKey();
-        JWTSigner signer = JWTSignerUtil.createSigner("RS256", privateKey);
-
+        JWTSigner signer = JWTSignerUtil.createSigner("RS256", keyPair.getPrivate());
         return JWT.create()
                 .setPayload("sub", user.getUsername())
                 .setPayload("roles", user.getRoles().stream()

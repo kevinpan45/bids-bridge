@@ -1,16 +1,14 @@
-package tech.kp45.bids.bridge.iam.api;
-
-import java.util.List;
+package tech.kp45.bids.bridge.iam;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.Data;
-import tech.kp45.bids.bridge.iam.service.UserService;
 
+@CrossOrigin
 @RestController
 public class IamApi {
     @Autowired
