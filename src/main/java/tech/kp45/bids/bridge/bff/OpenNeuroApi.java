@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+
 import lombok.extern.slf4j.Slf4j;
 import tech.kp45.bids.bridge.common.exception.BasicRuntimeException;
 import tech.kp45.bids.bridge.dataset.accessor.BidsDataset;
@@ -54,19 +56,40 @@ public class OpenNeuroApi {
     }
 
     @GetMapping("/api/openneuro/bids")
-    public List<BidsDataset> listOpenNeuroDatasets() {
+    public Page<BidsDataset> listOpenNeuroDatasets(
+        @RequestParam(defaultValue = "1") long page,
+        @RequestParam(defaultValue = "10") long size) {
+        
         Set<String> keys = openNeuroAccessor.getTrackingKeys();
-        List<BidsDataset> datasets = new ArrayList<>();
+        List<BidsDataset> allDatasets = new ArrayList<>();
+        
         if (keys.isEmpty()) {
-            datasets = openNeuroAccessor.scan();
-            log.info("Load {} datasets from local storage", datasets.size());
+            allDatasets = openNeuroAccessor.scan();
+            log.info("Load {} datasets from local storage", allDatasets.size());
         } else {
             for (String key : keys) {
-                datasets.add(openNeuroAccessor.getTackingDataset(key));
+                allDatasets.add(openNeuroAccessor.getTackingDataset(key));
             }
-            log.info("Get {} datasets from cache", datasets.size());
+            log.info("Get {} datasets from cache", allDatasets.size());
         }
 
-        return datasets;
+        // Create MyBatis Plus Page object
+        Page<BidsDataset> pageData = new Page<>(page, size);
+        
+        // Calculate total items
+        long total = allDatasets.size();
+        pageData.setTotal(total);
+        
+        // Calculate current page data
+        long startIndex = (page - 1) * size;
+        long endIndex = Math.min(startIndex + size, total);
+        
+        if (startIndex < total) {
+            pageData.setRecords(allDatasets.subList((int)startIndex, (int)endIndex));
+        } else {
+            pageData.setRecords(new ArrayList<>());
+        }
+        
+        return pageData;
     }
 }
