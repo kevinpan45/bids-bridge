@@ -7,6 +7,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+
 import cn.hutool.core.io.resource.ResourceUtil;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
@@ -55,6 +57,31 @@ public class BidsAppsAccessor {
             bidsApps.add(bidsApp);
         });
         return bidsApps;
+    }
+    
+    public Page<BidsApp> listPage(long current, long size) {
+        List<BidsApp> allBidsApps = list();
+        
+        // Create a MyBatis Plus Page object
+        Page<BidsApp> page = new Page<>(current, size);
+        
+        // Calculate total elements
+        long total = allBidsApps.size();
+        page.setTotal(total);
+        
+        // Calculate start and end indices for the requested page
+        long offset = (current - 1) * size;
+        long limit = Math.min(offset + size, total);
+        
+        // Get the subset of apps for the current page
+        List<BidsApp> records = (offset < total) ? 
+                allBidsApps.subList((int)offset, (int)limit) : 
+                new ArrayList<>();
+        
+        // Set records to the page
+        page.setRecords(records);
+        
+        return page;
     }
 
     private JSONArray loadApps() {

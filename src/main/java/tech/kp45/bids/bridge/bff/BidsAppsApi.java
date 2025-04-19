@@ -1,11 +1,12 @@
 package tech.kp45.bids.bridge.bff;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,7 +19,9 @@ public class BidsAppsApi {
     private BidsAppsAccessor bidsAppsAccessor;
 
     @GetMapping("/api/bids-apps")
-    public List<BidsApp> listBidsApps() {
-        return bidsAppsAccessor.list();
+    public Page<BidsApp> listBidsApps(
+            @RequestParam(value = "page", defaultValue = "1") long page,
+            @RequestParam(value = "size", defaultValue = "10") long size) {
+        return bidsAppsAccessor.listPage(page, size);
     }
 }
