@@ -133,6 +133,9 @@ public class BffApi {
         for (BidsDataset bidsDataset : bidses) {
             Dataset dataset = bidsDataset.toDataset();
             dataset.setStorageId(id);
+            if (dataset.getDoi() == null) {
+                dataset.setDoi("-");
+            }
             if (!datasetService.exist(dataset.getName(), dataset.getVersion())) {
                 datasetService.create(dataset);
                 datasets.add(dataset);
