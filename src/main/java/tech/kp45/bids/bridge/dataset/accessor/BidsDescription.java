@@ -3,6 +3,7 @@ package tech.kp45.bids.bridge.dataset.accessor;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import lombok.Data;
+import tech.kp45.bids.bridge.collection.BidsDataset;
 import tech.kp45.bids.bridge.common.exception.BasicRuntimeException;
 
 @Data

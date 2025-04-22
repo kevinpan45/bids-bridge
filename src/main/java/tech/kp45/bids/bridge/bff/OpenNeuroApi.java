@@ -1,9 +1,6 @@
 package tech.kp45.bids.bridge.bff;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -17,10 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import lombok.extern.slf4j.Slf4j;
+import tech.kp45.bids.bridge.collection.BidsDataset;
+import tech.kp45.bids.bridge.collection.BidsDatasetService;
 import tech.kp45.bids.bridge.common.exception.BasicRuntimeException;
-import tech.kp45.bids.bridge.dataset.accessor.BidsDataset;
 import tech.kp45.bids.bridge.dataset.accessor.provider.MinioBidsAccessor;
-import tech.kp45.bids.bridge.dataset.accessor.provider.OpenNeuroAccessor;
 import tech.kp45.bids.bridge.job.scheduler.argo.ArgoProperties;
 import tech.kp45.bids.bridge.job.scheduler.argo.ArgoSdk;
 import tech.kp45.bids.bridge.storage.Storage;
@@ -31,11 +28,11 @@ import tech.kp45.bids.bridge.storage.StorageService;
 @CrossOrigin
 public class OpenNeuroApi {
     @Autowired
-    private OpenNeuroAccessor openNeuroAccessor;
-    @Autowired
     private StorageService storageService;
     @Autowired
     private ArgoProperties argoProperties;
+    @Autowired
+    private BidsDatasetService bidsDatasetService;
 
     @PostMapping("/api/openneuro/{dataset}/collections")
     public void collectOpenNeuroDataset(@PathVariable String dataset, @RequestParam Integer storageId) {
@@ -57,39 +54,9 @@ public class OpenNeuroApi {
 
     @GetMapping("/api/openneuro/bids")
     public Page<BidsDataset> listOpenNeuroDatasets(
-        @RequestParam(defaultValue = "1") long page,
-        @RequestParam(defaultValue = "10") long size) {
+        @RequestParam(defaultValue = "1") int page,
+        @RequestParam(defaultValue = "10") int size) {
         
-        Set<String> keys = openNeuroAccessor.getTrackingKeys();
-        List<BidsDataset> allDatasets = new ArrayList<>();
-        
-        if (keys.isEmpty()) {
-            allDatasets = openNeuroAccessor.scan();
-            log.info("Load {} datasets from local storage", allDatasets.size());
-        } else {
-            for (String key : keys) {
-                allDatasets.add(openNeuroAccessor.getTackingDataset(key));
-            }
-            log.info("Get {} datasets from cache", allDatasets.size());
-        }
-
-        // Create MyBatis Plus Page object
-        Page<BidsDataset> pageData = new Page<>(page, size);
-        
-        // Calculate total items
-        long total = allDatasets.size();
-        pageData.setTotal(total);
-        
-        // Calculate current page data
-        long startIndex = (page - 1) * size;
-        long endIndex = Math.min(startIndex + size, total);
-        
-        if (startIndex < total) {
-            pageData.setRecords(allDatasets.subList((int)startIndex, (int)endIndex));
-        } else {
-            pageData.setRecords(new ArrayList<>());
-        }
-        
-        return pageData;
+        return bidsDatasetService.listPage("OpenNeuro", page, size);
     }
 }

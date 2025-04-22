@@ -16,8 +16,8 @@ import cn.hutool.core.io.resource.ResourceUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
+import tech.kp45.bids.bridge.collection.BidsDataset;
 import tech.kp45.bids.bridge.common.exception.BasicRuntimeException;
-import tech.kp45.bids.bridge.dataset.accessor.BidsDataset;
 import tech.kp45.bids.bridge.dataset.accessor.BidsStorageAccessor;
 
 @Slf4j

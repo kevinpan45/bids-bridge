@@ -29,10 +29,11 @@ job:
       token: 
 
 bids:
-  collector:
-    openneuro:
+  collectors:
+    - provider: OpenNeuro
+      source: "https://openneuro-dataset-collector.kp45.icu"
       sync:
-        enabled: true
+        enabled: false
         cron: 0 0 0 * * MON
         # cron: 0 0/5 * * * ?
       track:

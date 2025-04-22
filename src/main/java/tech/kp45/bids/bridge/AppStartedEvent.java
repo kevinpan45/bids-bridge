@@ -9,7 +9,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
-import tech.kp45.bids.bridge.dataset.accessor.BidsDataset;
+import tech.kp45.bids.bridge.collection.BidsDataset;
 import tech.kp45.bids.bridge.dataset.accessor.provider.OpenNeuroAccessor;
 
 @Slf4j

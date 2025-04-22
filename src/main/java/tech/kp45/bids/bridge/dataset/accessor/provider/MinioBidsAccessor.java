@@ -9,9 +9,9 @@ import org.apache.opendal.Operator;
 import org.springframework.util.StringUtils;
 
 import lombok.extern.slf4j.Slf4j;
+import tech.kp45.bids.bridge.collection.BidsDataset;
 import tech.kp45.bids.bridge.common.exception.BasicRuntimeException;
 import tech.kp45.bids.bridge.dataset.accessor.BidsCheckMode;
-import tech.kp45.bids.bridge.dataset.accessor.BidsDataset;
 import tech.kp45.bids.bridge.dataset.accessor.BidsStorageAccessor;
 import tech.kp45.bids.bridge.storage.Storage;
 
