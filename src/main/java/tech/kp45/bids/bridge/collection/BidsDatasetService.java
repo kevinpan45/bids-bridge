@@ -35,32 +35,11 @@ public class BidsDatasetService {
     }
 
     public Page<BidsDataset> listPage(String provider, long page, long size) {
-        // 确保分页参数有效
-        page = Math.max(1, page);
-        size = Math.max(1, size);
-        
-        // 创建查询条件
         LambdaQueryWrapper<BidsDataset> queryWrapper = new LambdaQueryWrapper<>();
         if (provider != null) {
             queryWrapper.eq(BidsDataset::getProvider, provider);
         }
-        
-        // 添加排序，确保分页结果一致
-        queryWrapper.orderByDesc(BidsDataset::getId);
-        
-        // 手动获取总记录数
-        long total = bidsDatasetMapper.selectCount(queryWrapper);
-        
-        // 手动计算偏移量
-        long offset = (page - 1) * size;
-        queryWrapper.last("LIMIT " + offset + ", " + size);
-        
-        // 创建分页对象并手动设置值
-        Page<BidsDataset> result = new Page<>(page, size);
-        result.setTotal(total);
-        result.setRecords(bidsDatasetMapper.selectList(queryWrapper));
-        
-        return result;
+        return bidsDatasetMapper.selectPage(Page.of(page, size), queryWrapper);
     }
 
     public void startTracking(String provider) {
