@@ -1,4 +1,4 @@
-package tech.kp45.bids.bridge.bff;
+package tech.kp45.bids.bridge.collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +11,9 @@ import tech.kp45.bids.bridge.job.JobService;
 import tech.kp45.bids.bridge.job.JobStatus;
 import tech.kp45.bids.bridge.job.scheduler.argo.ArgoEngine;
 
+/**
+ * Scheduled to track OpenNeuro collection task status.
+ */
 @Slf4j
 @Configuration
 public class OpenNeuroCollectionTracker {
