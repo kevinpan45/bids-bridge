@@ -35,6 +35,7 @@ public class BidsDescription {
         BidsDataset bidsDataset = new BidsDataset();
         bidsDataset.setName(this.name);
         bidsDataset.setBidsVersion(this.bidsVersion);
+        bidsDataset.setDataType(this.datasetType);
         // Suitable for OpenNeuro
         bidsDataset.setVersion(this.contentJson.getStr("Version"));
         bidsDataset.setDoi(doi);
