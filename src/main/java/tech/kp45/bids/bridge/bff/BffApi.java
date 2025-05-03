@@ -141,7 +141,8 @@ public class BffApi {
                 datasets.add(dataset);
             }
         }
-        log.info("Load {} datasets from storage {}", datasets.size(), storage);
+        log.info("Load {} datasets from bucket {} of storage {}", datasets.size(), storage.getBucket(),
+                storage.getName());
         return datasets.size();
     }
 
