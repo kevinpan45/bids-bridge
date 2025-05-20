@@ -54,9 +54,10 @@ public class OpenNeuroApi {
 
     @GetMapping("/api/openneuro/bids")
     public Page<BidsDataset> listOpenNeuroDatasets(
-        @RequestParam(defaultValue = "1") long page,
-        @RequestParam(defaultValue = "10") long size) {
-        
-        return bidsDatasetService.listPage("OpenNeuro", page, size);
+            @RequestParam(defaultValue = "1") long page,
+            @RequestParam(defaultValue = "10") long size,
+            @RequestParam(required = false) String provider) {
+
+        return bidsDatasetService.listPage(provider, page, size);
     }
 }
