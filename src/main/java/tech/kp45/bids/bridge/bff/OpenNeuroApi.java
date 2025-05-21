@@ -3,6 +3,7 @@ package tech.kp45.bids.bridge.bff;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import tech.kp45.bids.bridge.collection.BidsDataset;
 import tech.kp45.bids.bridge.collection.BidsDatasetService;
+import tech.kp45.bids.bridge.collection.OpenNeuroCollectionTracker;
 import tech.kp45.bids.bridge.common.exception.BasicRuntimeException;
 import tech.kp45.bids.bridge.dataset.accessor.provider.MinioBidsAccessor;
 import tech.kp45.bids.bridge.job.scheduler.argo.ArgoProperties;
@@ -33,6 +35,8 @@ public class OpenNeuroApi {
     private ArgoProperties argoProperties;
     @Autowired
     private BidsDatasetService bidsDatasetService;
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
 
     @PostMapping("/api/openneuro/{dataset}/collections")
     public void collectOpenNeuroDataset(@PathVariable String dataset, @RequestParam Integer storageId) {
@@ -49,6 +53,8 @@ public class OpenNeuroApi {
             ArgoSdk argoSdk = new ArgoSdk(argoProperties);
             String workflowId = argoSdk.submit("openneuro-collector", Map.of("dataset", dataset));
             log.info("Workflow {} is submitted for dataset {} collection", workflowId, dataset);
+            // Store the workflow ID in Redis or a database for tracking
+            redisTemplate.opsForValue().set(OpenNeuroCollectionTracker.OPENNEURO_COLLECTION_TRACKER_PREFIX + workflowId, dataset);
         }
     }
 
