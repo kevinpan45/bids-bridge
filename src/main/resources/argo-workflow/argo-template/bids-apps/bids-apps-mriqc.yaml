@@ -41,15 +41,15 @@ spec:
           - "/shared/dataset"
           - "--verbose"
         volumeMounts:
-          - name: rclone-openneuro
+          - name: rclone-config
             mountPath: /root/.config/rclone/
             readOnly: true
           - name: shared-data
             mountPath: /shared
       volumes:
-        - name: rclone-openneuro
+        - name: rclone-config
           configMap:
-            name: rclone-openneuro
+            name: rclone-config
     - name: execute-pipeline
       container:
         image: nipreps/mriqc:24.0.2
@@ -78,12 +78,12 @@ spec:
           - "minio:artifact/{{workflow.name}}"
           - "--verbose"
         volumeMounts:
-          - name: rclone-openneuro
+          - name: rclone-config
             mountPath: /root/.config/rclone/
             readOnly: true
           - name: shared-data
             mountPath: /shared
       volumes:
-        - name: rclone-openneuro
+        - name: rclone-config
           configMap:
-            name: rclone-openneuro
+            name: rclone-config

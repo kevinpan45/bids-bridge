@@ -24,10 +24,10 @@ spec:
           - "minio:bids/{{workflow.parameters.dataset}}"
           - "--verbose"
         volumeMounts:
-          - name: rclone-openneuro
+          - name: rclone-config
             mountPath: /root/.config/rclone/
             readOnly: true
       volumes:
-        - name: rclone-openneuro
+        - name: rclone-config
           configMap:
-            name: rclone-openneuro
+            name: rclone-config
