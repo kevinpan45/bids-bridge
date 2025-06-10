@@ -13,6 +13,7 @@ services:
       - MYSQL_PASSWORD=password
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - REDIS_PASSWORD=password
     networks:
       - bids-bridge
     depends_on:
@@ -44,6 +45,7 @@ services:
   redis:
     image: redis
     container_name: bids-bridge-redis
+    command: redis-server --requirepass password
     restart: "unless-stopped"
     volumes:
       - /data/local-stack/bids-bridge/redis:/data
