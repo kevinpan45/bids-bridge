@@ -10,6 +10,11 @@ spec:
     parameters:
     - name: dataset
       description: Accession number of the dataset
+  # Automatic cleanup configuration
+  ttlStrategy:
+    secondsAfterCompletion: 1800  # Clean up 30 minutes after completion
+    secondsAfterSuccess: 900      # Clean up 15 minutes after success
+    secondsAfterFailure: 3600     # Clean up 1 hour after failure
   templates:
     - name: rclone
       inputs:
