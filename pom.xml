@@ -47,7 +47,7 @@
 		<dependency>
 			<groupId>cn.hutool</groupId>
 			<artifactId>hutool-json</artifactId>
-			<version>5.8.37</version>
+			<version>5.8.38</version>
 		</dependency>
 
 
