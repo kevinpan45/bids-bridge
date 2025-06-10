@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -144,6 +146,12 @@ public class BffApi {
         log.info("Load {} datasets from bucket {} of storage {}", datasets.size(), storage.getBucket(),
                 storage.getName());
         return datasets.size();
+    }
+
+    @GetMapping("/api/datasets")
+    public Page<Dataset> listDatasets(@RequestParam(defaultValue = "1") long page,
+            @RequestParam(defaultValue = "10") long size) {
+        return datasetService.listPage(page, size);
     }
 
     @GetMapping("/api/datasets/{id}")

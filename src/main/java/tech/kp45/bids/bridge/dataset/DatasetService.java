@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import tech.kp45.bids.bridge.common.exception.BasicRuntimeException;
 
@@ -50,5 +51,9 @@ public class DatasetService {
         LambdaQueryWrapper<Dataset> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Dataset::getStorageId, id);
         return datasetMapper.selectList(queryWrapper);
+    }
+
+    public Page<Dataset> listPage(long page, long size) {
+        return datasetMapper.selectPage(Page.of(page, size), null);
     }
 }
