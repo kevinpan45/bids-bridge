@@ -6,6 +6,10 @@ metadata:
   generateName: bids-apps-mriqc-
 spec:
   entrypoint: main
+  arguments:
+    parameters:
+    - name: dataset
+      description: "BIDS dataset identifier"
   volumeClaimTemplates:
   - metadata:
       name: shared-data
