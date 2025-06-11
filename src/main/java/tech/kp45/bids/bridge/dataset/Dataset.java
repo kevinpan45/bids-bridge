@@ -9,6 +9,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
+import tech.kp45.bids.bridge.collection.BidsDataset;
+import tech.kp45.bids.bridge.collection.OpenNeuroCollectionTracker;
 
 @Data
 @Accessors(chain = true)
@@ -26,6 +28,22 @@ public class Dataset {
     private Integer storageId;
     @TableField("storage_path")
     private String storagePath;
+    @TableField("provider")
+    private String provider;
+    @TableField("description")
+    private String description;
+    /**
+     * Collect from which BIDS dataset in the platform tracking system.
+     * @see BidsDataset
+     */
+    @TableField("collect_from")
+    private Integer collectFrom;
+    /**
+     * The event that triggered the collection of this dataset.
+     * @see OpenNeuroCollectionTracker
+     */
+    @TableField("collect_event")
+    private String collectEvent;
     @TableField("created_at")
     private Date createdAt;
     @TableField("updated_at")

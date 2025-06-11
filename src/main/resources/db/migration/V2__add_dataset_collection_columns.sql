@@ -1,0 +1,5 @@
+ALTER TABLE dataset 
+ADD COLUMN `provider` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+ADD COLUMN `description` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+ADD COLUMN collect_from int(10) UNSIGNED ZEROFILL NULL DEFAULT NULL,
+ADD COLUMN collect_event VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL;
