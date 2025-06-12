@@ -66,6 +66,10 @@ public class BidsDatasetService {
                 try {
                     JSONObject gqlObject = datasets.getJSONObject(i);
                     BidsDataset bidsDataset = gqlObject.toBean(BidsDataset.class);
+                    String doi = bidsDataset.getDoi();
+                    if (StringUtils.hasText(doi) && doi.startsWith("doi:")) {
+                        bidsDataset.setDoi(doi.substring(4)); // Remove "doi:" prefix
+                    }
                     boolean exist = exist(bidsDataset.getProvider(), bidsDataset.getName(),
                             bidsDataset.getVersion());
                     if (exist) {
