@@ -88,6 +88,7 @@ public class BidsDatasetService {
         LambdaQueryWrapper<BidsDataset> queryWrapper = new LambdaQueryWrapper<>();
         if (StringUtils.hasText(provider)) {
             queryWrapper.eq(BidsDataset::getProvider, provider);
+            queryWrapper.orderByDesc(BidsDataset::getId);
         }
         return bidsDatasetMapper.selectList(queryWrapper);
     }

@@ -54,6 +54,8 @@ public class DatasetService {
     }
 
     public Page<Dataset> listPage(long page, long size) {
-        return datasetMapper.selectPage(Page.of(page, size), null);
+        LambdaQueryWrapper<Dataset> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.orderByDesc(Dataset::getId);
+        return datasetMapper.selectPage(Page.of(page, size), queryWrapper);
     }
 }
