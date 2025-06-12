@@ -28,6 +28,13 @@ spec:
           - "s3:openneuro.org/{{workflow.parameters.dataset}}"
           - "minio:bids/{{workflow.parameters.dataset}}"
           - "--verbose"
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "1"
+          limits:
+            memory: "4Gi"
+            cpu: "2"
         volumeMounts:
           - name: rclone-config
             mountPath: /root/.config/rclone/
