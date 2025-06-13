@@ -92,4 +92,8 @@ public class BidsDatasetService {
         }
         return bidsDatasetMapper.selectList(queryWrapper);
     }
+
+    public BidsDataset findById(Integer id) {
+        return bidsDatasetMapper.selectById(id);
+    }
 }
