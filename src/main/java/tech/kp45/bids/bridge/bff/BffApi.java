@@ -33,6 +33,7 @@ import tech.kp45.bids.bridge.job.JobService;
 import tech.kp45.bids.bridge.job.artifact.Artifact;
 import tech.kp45.bids.bridge.job.artifact.ArtifactService;
 import tech.kp45.bids.bridge.job.scheduler.argo.ArgoProperties;
+import tech.kp45.bids.bridge.job.scheduler.argo.ArgoSdk;
 import tech.kp45.bids.bridge.pipeline.Pipeline;
 import tech.kp45.bids.bridge.pipeline.PipelineService;
 import tech.kp45.bids.bridge.storage.Storage;
@@ -297,5 +298,11 @@ public class BffApi {
         properties.setNamespace(argoProperties.getNamespace());
         properties.setServerUrl(argoProperties.getServerUrl());
         return properties;
+    }
+
+    @GetMapping("/api/engines/status")
+    public String getArgoServerStatus() {
+        ArgoSdk argoSdk = new ArgoSdk(argoProperties);
+        return argoSdk.test() ? "UP" : "DOWN";
     }
 }

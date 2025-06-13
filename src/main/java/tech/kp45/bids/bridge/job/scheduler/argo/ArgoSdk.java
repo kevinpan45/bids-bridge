@@ -45,7 +45,7 @@ public class ArgoSdk {
             return HttpRequest.get(serverUrl + "/api/v1/workflows/argo").execute().isOk();
         } catch (Exception e) {
             log.error("Argo Workflows server {} request error.", serverUrl, e);
-            throw new BasicRuntimeException("Argo Workflows server " + serverUrl + " is not available.");
+            return false;
         }
     }
 
