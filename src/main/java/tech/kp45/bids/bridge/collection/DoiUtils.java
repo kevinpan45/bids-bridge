@@ -28,7 +28,13 @@ public class DoiUtils {
         if (parts.length < 2) {
             throw new BasicRuntimeException("DOI does not contain organization part: " + doi);
         }
-        return parts[1].split("\\.")[0]; // Extract the organization from the DOI
+        if (parts.length > 1) {
+            String[] subParts = parts[1].split("\\.");
+            if (subParts.length > 0) {
+                return subParts[0]; // Extract the organization, e.g., openneuro
+            }
+        }
+        throw new BasicRuntimeException("Unable to extract organization from DOI: " + doi);
     }
 
     public static String getAccessionNumber(String doi) {
@@ -36,12 +42,14 @@ public class DoiUtils {
             throw new BasicRuntimeException("Invalid DOI format: " + doi);
         }
         // Extract the accession number from the DOI
-        String[] parts = doi.split("\\.");
-        if (parts.length > 2) {
-            return parts[1] + "." + parts[2]; // e.g., ds001145 from 10.18112/openneuro.ds001145.v1.0.0
-        } else {
-            return doi; // Fallback if the DOI format is unexpected
+        String[] parts = doi.split("/");
+        if (parts.length > 1) {
+            String[] subParts = parts[1].split("\\.");
+            if (subParts.length > 1) {
+                return subParts[1]; // Extract accession number, e.g., ds000011
+            }
         }
+        throw new BasicRuntimeException("Unable to extract accession number from DOI: " + doi);
     }
 
     public static String getVersionFromDoi(String doi) {
@@ -50,8 +58,8 @@ public class DoiUtils {
         }
         // Extract the version from the DOI
         String[] parts = doi.split("\\.");
-        if (parts.length > 3) {
-            return parts[3]; // e.g., v1.0.0 from 10.18112/openneuro.ds001145.v1.0.0
+        if (parts.length >= 4) {
+            return parts[parts.length - 3] + "." + parts[parts.length - 2] + "." + parts[parts.length - 1]; // e.g., v1.0.0 from 10.18112/openneuro.ds001145.v1.0.0
         } else {
             return "unknown"; // Fallback if the version is not present
         }
