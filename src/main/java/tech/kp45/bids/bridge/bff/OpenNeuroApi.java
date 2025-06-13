@@ -1,6 +1,9 @@
 package tech.kp45.bids.bridge.bff;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -21,6 +24,7 @@ import tech.kp45.bids.bridge.collection.DoiUtils;
 import tech.kp45.bids.bridge.collection.OpenNeuroCollectionTracker;
 import tech.kp45.bids.bridge.common.exception.BasicRuntimeException;
 import tech.kp45.bids.bridge.dataset.accessor.provider.MinioBidsAccessor;
+import tech.kp45.bids.bridge.dataset.accessor.provider.OpenNeuroAccessor;
 import tech.kp45.bids.bridge.job.scheduler.argo.ArgoProperties;
 import tech.kp45.bids.bridge.job.scheduler.argo.ArgoSdk;
 import tech.kp45.bids.bridge.storage.Storage;
@@ -91,5 +95,48 @@ public class OpenNeuroApi {
             @RequestParam(required = false) String provider) {
 
         return bidsDatasetService.listPage(provider, page, size);
+    }
+
+    @GetMapping("/api/openneuro/bids/{id}/files")
+    public List<String> listOpenNeuroDatasetFiles(@PathVariable Integer id) {
+        BidsDataset bidsDataset = bidsDatasetService.findById(id);
+        if (bidsDataset == null) {
+            log.error("Dataset with ID {} not found", id);
+            throw new BasicRuntimeException("Dataset not found.");
+        }
+
+        String doi = bidsDataset.getDoi();
+        if (!StringUtils.hasText(doi)) {
+            log.error("Dataset DOI is not set for ID {}", id);
+            throw new BasicRuntimeException("Dataset DOI is not set.");
+        }
+
+        String accessionNumber = DoiUtils.getAccessionNumber(doi);
+        if (!StringUtils.hasText(accessionNumber)) {
+            log.error("Cannot extract OpenNeuro accession number from DOI: {}", doi);
+            throw new BasicRuntimeException("Cannot extract OpenNeuro accession number from DOI");
+        }
+
+        List<String> files = new ArrayList<>();
+
+        String bidsFilesKey = "openneuro:" + accessionNumber + ":files:";
+        Set<String> fileKeys = redisTemplate.keys(bidsFilesKey + "*");
+        if (fileKeys.isEmpty()) {
+            OpenNeuroAccessor accessor = new OpenNeuroAccessor();
+            accessor.scanFiles(accessionNumber, files);
+            log.info("Get {} files from OpenNeuro dataset {}", files.size(), accessionNumber);
+            files.stream().forEach(file -> {
+                String filename = StringUtils.getFilename(file);
+                String fileKey = bidsFilesKey + filename;
+                redisTemplate.opsForValue().set(fileKey, file);
+            });
+            log.info("OpenNeuro dataset {} files cached", accessionNumber);
+        } else {
+            fileKeys.forEach(fileKey -> {
+                files.add(redisTemplate.opsForValue().get(fileKey));
+            });
+        }
+
+        return files;
     }
 }

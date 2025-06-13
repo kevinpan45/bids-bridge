@@ -50,6 +50,7 @@ public class DatasetService {
     public List<Dataset> listByStorage(Integer id) {
         LambdaQueryWrapper<Dataset> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Dataset::getStorageId, id);
+        queryWrapper.orderByDesc(Dataset::getId);
         return datasetMapper.selectList(queryWrapper);
     }
 
