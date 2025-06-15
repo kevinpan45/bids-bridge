@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bids-bridge-api
+spec:
+  selector:
+    matchLabels:
+      app: bids-bridge-api
+  template:
+    metadata:
+      labels:
+        app: bids-bridge-api
+    spec:
+      containers:
+        - name: bids-bridge-api
+          image: ghcr.io/kevinpan45/bids-bridge:latest
+          env:
+            - name: MYSQL_HOST
+              value: bids-bridge-mysql
+            - name: MYSQL_USER
+              value: root
+            - name: MYSQL_PASSWORD
+              value: password
+            - name: REDIS_HOST
+              value: bids-bridge-redis
+            - name: REDIS_PORT
+              value: "6379"
+            - name: REDIS_USERNAME
+              value: default
+            - name: REDIS_PASSWORD
+              value: password
+            - name: ARGO_WORKFLOW_SERVER
+              value: https://workstation.home:2746
+            - name: SERVER_PORT
+              value: "8080"
+            - name: MANAGEMENT_SERVER_PORT
+              value: "8081"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 8080

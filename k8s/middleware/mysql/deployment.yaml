@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bids-bridge-mysql
+spec:
+  selector:
+    matchLabels:
+      app: bids-bridge-mysql
+  template:
+    metadata:
+      labels:
+        app: bids-bridge-mysql
+    spec:
+      containers:
+        - name: bids-bridge-mysql
+          image: mysql
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: password
+          ports:
+            - containerPort: 3306

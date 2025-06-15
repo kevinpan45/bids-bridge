@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bids-bridge-ui
+spec:
+  selector:
+    matchLabels:
+      app: bids-bridge-ui
+  template:
+    metadata:
+      labels:
+        app: bids-bridge-ui
+    spec:
+      containers:
+        - name: bids-bridge-ui
+          image: ghcr.io/kevinpan45/bids-bridge-ui:latest
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 80
