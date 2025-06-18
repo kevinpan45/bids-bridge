@@ -1,4 +1,4 @@
-@baseUrl = http://127.0.0.1:8080
+@baseUrl = http://localhost:8080
 # @baseUrl = http://workstation.home:18080
 # @baseUrl = https://api.kp45.icu
 

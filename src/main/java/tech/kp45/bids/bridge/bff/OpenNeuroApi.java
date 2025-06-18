@@ -20,6 +20,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import tech.kp45.bids.bridge.collection.BidsDataset;
 import tech.kp45.bids.bridge.collection.BidsDatasetService;
+import tech.kp45.bids.bridge.collection.Collection;
+import tech.kp45.bids.bridge.collection.CollectionService;
+import tech.kp45.bids.bridge.collection.CollectionStatus;
 import tech.kp45.bids.bridge.collection.DoiUtils;
 import tech.kp45.bids.bridge.collection.OpenNeuroCollectionTracker;
 import tech.kp45.bids.bridge.common.exception.BasicRuntimeException;
@@ -42,6 +45,8 @@ public class OpenNeuroApi {
     private BidsDatasetService bidsDatasetService;
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
+    @Autowired
+    private CollectionService collectionService;
 
     @PostMapping("/api/openneuro/{id}/collections")
     public void collectOpenNeuroDataset(@PathVariable Integer id, @RequestParam Integer storageId) {
@@ -75,16 +80,25 @@ public class OpenNeuroApi {
             throw new BasicRuntimeException("Storage not found.");
         }
         MinioBidsAccessor accessor = new MinioBidsAccessor(storage);
-        boolean exist = accessor.exist(accessionNumber + "/");
+        String storagePath = accessionNumber + "/";
+        boolean exist = accessor.exist(storagePath);
         if (exist) {
             throw new BasicRuntimeException("Dataset is exist.");
         } else {
             ArgoSdk argoSdk = new ArgoSdk(argoProperties);
             String workflowId = argoSdk.submit("openneuro-collector", Map.of("dataset", accessionNumber));
             log.info("Workflow {} is submitted for dataset {} collection", workflowId, accessionNumber);
-            // Store the workflow ID in Redis or a database for tracking
-            redisTemplate.opsForValue().set(OpenNeuroCollectionTracker.OPENNEURO_COLLECTION_TRACKER_PREFIX + workflowId,
-                    accessionNumber);
+
+            Collection collection = new Collection();
+            String collectionDescription = "OpenNeuro dataset "
+                    + accessionNumber + " is collecting to " + storage.getName() + " path " + storagePath;
+            collection.setBidsDatasetId(id)
+                    .setStorageId(storageId)
+                    .setStoragePath(storagePath)
+                    .setCollectionExecutionId(workflowId)
+                    .setStatus(CollectionStatus.IN_PROGRESS.name())
+                    .setDescription(collectionDescription);
+            collectionService.create(collection);
         }
     }
 
