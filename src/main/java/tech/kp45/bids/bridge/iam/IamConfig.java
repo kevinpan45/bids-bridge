@@ -12,12 +12,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 public class IamConfig {
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public KeyPair keyPair() throws NoSuchAlgorithmException {
+    KeyPair keyPair() throws NoSuchAlgorithmException {
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
         keyPairGenerator.initialize(2048);
         return keyPairGenerator.generateKeyPair();

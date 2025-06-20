@@ -20,8 +20,8 @@ public class BidsAppsApi {
 
     @GetMapping("/api/bids-apps")
     public Page<BidsApp> listBidsApps(
-            @RequestParam(value = "page", defaultValue = "1") long page,
-            @RequestParam(value = "size", defaultValue = "10") long size) {
+            @RequestParam(defaultValue = "1") long page,
+            @RequestParam(defaultValue = "10") long size) {
         return bidsAppsAccessor.listPage(page, size);
     }
 }
