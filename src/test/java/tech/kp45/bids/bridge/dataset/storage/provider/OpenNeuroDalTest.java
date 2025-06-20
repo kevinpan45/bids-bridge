@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import tech.kp45.bids.bridge.collection.BidsDataset;
+import tech.kp45.bids.bridge.collection.dataset.BidsDataset;
 import tech.kp45.bids.bridge.dataset.accessor.BidsStorageAccessor;
 import tech.kp45.bids.bridge.dataset.accessor.provider.OpenNeuroAccessor;
 

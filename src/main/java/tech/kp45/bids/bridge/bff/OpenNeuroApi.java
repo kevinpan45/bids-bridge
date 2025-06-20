@@ -18,13 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import lombok.extern.slf4j.Slf4j;
-import tech.kp45.bids.bridge.collection.BidsDataset;
-import tech.kp45.bids.bridge.collection.BidsDatasetService;
 import tech.kp45.bids.bridge.collection.Collection;
 import tech.kp45.bids.bridge.collection.CollectionService;
 import tech.kp45.bids.bridge.collection.CollectionStatus;
 import tech.kp45.bids.bridge.collection.DoiUtils;
 import tech.kp45.bids.bridge.collection.OpenNeuroCollectionTracker;
+import tech.kp45.bids.bridge.collection.dataset.BidsDataset;
+import tech.kp45.bids.bridge.collection.dataset.BidsDatasetService;
 import tech.kp45.bids.bridge.common.exception.BasicRuntimeException;
 import tech.kp45.bids.bridge.dataset.accessor.provider.MinioBidsAccessor;
 import tech.kp45.bids.bridge.dataset.accessor.provider.OpenNeuroAccessor;

@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import tech.kp45.bids.bridge.collection.dataset.BidsDatasetService;
+
 @CrossOrigin
 @RestController
 public class CollectionApi {
