@@ -1,6 +1,7 @@
 package tech.kp45.bids.bridge.job.scheduler.argo;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,6 +80,16 @@ public class ArgoEngine extends JobEngine {
     @Override
     public boolean exist(String engineJobId) {
         return new ArgoSdk(argoProperties).listWorkflow().contains(engineJobId);
+    }
+
+    @Override
+    public boolean deployed(String enginePipelineId) {
+        return new ArgoSdk(argoProperties).workflowTemplateExist(enginePipelineId);
+    }
+
+    @Override
+    public List<String> getPipelines() {
+        return new ArgoSdk(argoProperties).listWorkflowTemplate();
     }
 
 }

@@ -62,6 +62,18 @@ GET {{baseUrl}}/api/pipelines/1 HTTP/1.1
 
 ###
 
+POST {{baseUrl}}/api/pipelines HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "MRIQC",
+  "version": "24.0.2",
+  "description": "Automated Quality Control and visual reports for Quality Assessment of structural (T1w, T2w) and functional MRI of the brain",
+  "workflow": "bids-apps-mriqc"
+}
+
+###
+
 POST {{baseUrl}}/api/jobs?name=test&group=test&pipelineId=57&datasetId=2 HTTP/1.1
 
 ###

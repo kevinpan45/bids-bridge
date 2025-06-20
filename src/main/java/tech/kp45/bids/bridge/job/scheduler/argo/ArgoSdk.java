@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.springframework.util.StringUtils;
 
+import cn.hutool.core.io.IORuntimeException;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.Method;
 import cn.hutool.json.JSONArray;
@@ -44,7 +45,11 @@ public class ArgoSdk {
         try {
             return HttpRequest.get(serverUrl + "/api/v1/workflows/argo").execute().isOk();
         } catch (Exception e) {
-            log.error("Argo Workflows server {} request error.", serverUrl, e);
+            if (e instanceof IORuntimeException) {
+                log.error("Argo Workflows server {} is not reachable of reason [{}]", serverUrl, e.getMessage());
+            } else {
+                log.error("Argo Workflows server {} request error.", serverUrl, e);
+            }
             return false;
         }
     }
