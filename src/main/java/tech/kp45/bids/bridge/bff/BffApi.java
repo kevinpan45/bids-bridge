@@ -23,7 +23,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
-import tech.kp45.bids.bridge.collection.BidsDataset;
+import tech.kp45.bids.bridge.collection.dataset.BidsDataset;
 import tech.kp45.bids.bridge.common.exception.BasicRuntimeException;
 import tech.kp45.bids.bridge.dataset.Dataset;
 import tech.kp45.bids.bridge.dataset.DatasetService;

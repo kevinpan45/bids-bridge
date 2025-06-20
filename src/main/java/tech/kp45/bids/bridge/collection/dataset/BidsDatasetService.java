@@ -1,4 +1,4 @@
-package tech.kp45.bids.bridge.collection;
+package tech.kp45.bids.bridge.collection.dataset;
 
 import java.util.List;
 
@@ -15,6 +15,8 @@ import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
+import tech.kp45.bids.bridge.collection.BidsCollectionConfig;
+import tech.kp45.bids.bridge.collection.CollectorConfig;
 import tech.kp45.bids.bridge.common.exception.BasicRuntimeException;
 
 @Slf4j
@@ -31,9 +33,8 @@ public class BidsDatasetService {
 
     public boolean exist(String provider, String name, String version) {
         LambdaQueryWrapper<BidsDataset> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(BidsDataset::getProvider, provider);
-        queryWrapper.eq(BidsDataset::getName, name);
-        queryWrapper.eq(BidsDataset::getVersion, version);
+        queryWrapper.eq(BidsDataset::getProvider, provider).eq(BidsDataset::getName, name).eq(BidsDataset::getVersion,
+                version);
         return bidsDatasetMapper.selectCount(queryWrapper) > 0;
     }
 
@@ -87,8 +88,7 @@ public class BidsDatasetService {
     public List<BidsDataset> list(String provider) {
         LambdaQueryWrapper<BidsDataset> queryWrapper = new LambdaQueryWrapper<>();
         if (StringUtils.hasText(provider)) {
-            queryWrapper.eq(BidsDataset::getProvider, provider);
-            queryWrapper.orderByDesc(BidsDataset::getId);
+            queryWrapper.eq(BidsDataset::getProvider, provider).orderByDesc(BidsDataset::getId);
         }
         return bidsDatasetMapper.selectList(queryWrapper);
     }

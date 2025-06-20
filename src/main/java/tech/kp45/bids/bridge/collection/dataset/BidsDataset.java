@@ -1,4 +1,4 @@
-package tech.kp45.bids.bridge.collection;
+package tech.kp45.bids.bridge.collection.dataset;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
