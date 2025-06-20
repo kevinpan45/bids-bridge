@@ -233,6 +233,12 @@ public class BffApi {
         return pipelineService.get(id);
     }
 
+    @PostMapping("/api/pipelines")
+    public Pipeline createPipeline(@RequestBody Pipeline pipeline) {
+        pipelineService.create(pipeline);
+        return pipeline;
+    }
+
     @Autowired
     private JobService jobService;
 

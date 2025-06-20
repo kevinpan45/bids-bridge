@@ -8,8 +8,10 @@ import org.springframework.util.StringUtils;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 
+import lombok.extern.slf4j.Slf4j;
 import tech.kp45.bids.bridge.common.exception.BasicRuntimeException;
 
+@Slf4j
 @Service
 public class PipelineService {
 
@@ -25,6 +27,13 @@ public class PipelineService {
     }
 
     public void create(Pipeline pipeline) {
+        if (!StringUtils.hasText(pipeline.getName()) || !StringUtils.hasText(pipeline.getVersion())) {
+            throw new BasicRuntimeException("name or version is empty");
+        }
+
+        if (!StringUtils.hasText(pipeline.getWorkflow())) {
+            throw new BasicRuntimeException("workflow of job engine is empty");
+        }
         pipelineMapper.insert(pipeline);
     }
 
