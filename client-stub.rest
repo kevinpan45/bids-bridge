@@ -118,5 +118,5 @@ Content-Type: application/json
 
 ###
 
-POST {{baseUrl}}/api/collections/datasets/tasks?provider=CCNDC HTTP/1.1
+POST {{baseUrl}}/api/collections/datasets/tasks?provider=OpenNeuro HTTP/1.1
 Content-Type: application/json

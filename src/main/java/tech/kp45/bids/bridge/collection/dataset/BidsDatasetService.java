@@ -82,6 +82,8 @@ public class BidsDatasetService {
                     log.error("Failed to parse dataset: {}", datasets.get(i), e);
                 }
             }
+        } else {
+            log.error("Failed to fetch datasets from source: {}. HTTP status: {} and message: {}", trackSource, resp.getStatus(), resp.body());
         }
     }
 
@@ -95,5 +97,9 @@ public class BidsDatasetService {
 
     public BidsDataset findById(Integer id) {
         return bidsDatasetMapper.selectById(id);
+    }
+
+    public void update(BidsDataset bidsDataset) {
+        bidsDatasetMapper.updateById(bidsDataset);
     }
 }

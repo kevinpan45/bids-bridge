@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import lombok.extern.slf4j.Slf4j;
+import tech.kp45.bids.bridge.collection.dataset.BidsDataset;
+import tech.kp45.bids.bridge.collection.dataset.BidsDatasetService;
 import tech.kp45.bids.bridge.job.JobStatus;
 import tech.kp45.bids.bridge.job.scheduler.argo.ArgoEngine;
 
@@ -20,6 +22,8 @@ public class OpenNeuroCollectionTracker {
     private ArgoEngine argoEngine;
     @Autowired
     private CollectionService collectionService;
+    @Autowired
+    private BidsDatasetService bidsDatasetService;
 
     @Scheduled(cron = "0 */5 * * * *")
     public void trackCollection() {
@@ -41,6 +45,8 @@ public class OpenNeuroCollectionTracker {
                         collection.setStatus(CollectionStatus.CANCELLED.name());
                         collectionService.update(collection);
                         log.info("Collection {} is finished.", collection.getCollectionExecutionId());
+                        
+                        updateBidsDatasetCollectedStatus(collection);
                     } else if (status == JobStatus.FAILED) {
                         collection.setStatus(CollectionStatus.FAILED.name());
                         collectionService.update(collection);
@@ -55,6 +61,17 @@ public class OpenNeuroCollectionTracker {
                         + " is not found.");
                 collectionService.update(collection);
             }
+        }
+    }
+
+    private void updateBidsDatasetCollectedStatus(Collection collection) {
+        BidsDataset bidsDataset = bidsDatasetService.findById(collection.getBidsDatasetId());
+        if (bidsDataset == null) {
+            log.warn("BidsDataset with ID {} not found for collection {}", collection.getBidsDatasetId(),
+                    collection.getCollectionExecutionId());
+        } else {
+            bidsDataset.setCollected(true);
+            bidsDatasetService.update(bidsDataset);
         }
     }
 }
