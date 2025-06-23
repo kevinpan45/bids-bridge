@@ -10,13 +10,8 @@ spec:
     parameters:
     - name: dataset
       description: "BIDS dataset identifier"
-  # Automatic cleanup configuration
-  ttlStrategy:
-    secondsAfterCompletion: 3600  # Clean up 1 hour after completion
-    secondsAfterSuccess: 1800     # Clean up 30 minutes after success
-    secondsAfterFailure: 7200     # Clean up 2 hours after failure
   volumeClaimGC:
-    strategy: OnWorkflowCompletion  # Auto-delete PVCs when workflow completes
+    strategy: OnWorkflowCompletion  # Keep workflow records but release storage after job completion
   volumeClaimTemplates:
   - metadata:
       name: shared-data
