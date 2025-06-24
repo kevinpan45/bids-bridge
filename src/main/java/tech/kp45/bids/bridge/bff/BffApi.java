@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import tech.kp45.bids.bridge.collection.dataset.BidsDataset;
 import tech.kp45.bids.bridge.common.exception.BasicRuntimeException;
@@ -84,6 +85,11 @@ public class BffApi {
     public void updateStorage(@PathVariable Integer id, @RequestBody Storage storage) {
         storage.setId(id);
         storageService.update(storage);
+    }
+
+    @PutMapping("/api/storages/{id}/credentials")
+    public void updateStorageCredentials(@PathVariable Integer id, @RequestBody Credential credential) {
+        storageService.updateCredential(id, credential.getAccessKey(), credential.getSecretKey());
     }
 
     @GetMapping("/api/storages/{id}/status")
@@ -311,4 +317,10 @@ public class BffApi {
         ArgoSdk argoSdk = new ArgoSdk(argoProperties);
         return argoSdk.test() ? "UP" : "DOWN";
     }
+}
+
+@Data
+class Credential {
+    private String accessKey;
+    private String secretKey;
 }
