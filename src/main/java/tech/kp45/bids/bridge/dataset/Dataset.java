@@ -9,8 +9,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
-import tech.kp45.bids.bridge.collection.BidsDataset;
 import tech.kp45.bids.bridge.collection.OpenNeuroCollectionTracker;
+import tech.kp45.bids.bridge.collection.dataset.BidsDataset;
 
 @Data
 @Accessors(chain = true)

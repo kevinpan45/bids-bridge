@@ -32,12 +32,38 @@ public class StorageService {
         storageMapper.insert(storage);
     }
 
+    /**
+     * Update storage excluding credential fields.
+     * 
+     * @param storage
+     */
     public void update(Storage storage) {
-        if (StrUtil.hasBlank(storage.getName(), storage.getProvider(), storage.getEndpoint(), storage.getBucket(),
-                storage.getAccessKey(), storage.getSecretKey())) {
+        if (StrUtil.hasBlank(storage.getName(), storage.getProvider(), storage.getEndpoint(), storage.getBucket())) {
             log.error("Storage necessary fields are missing {}", storage);
             throw new BasicRuntimeException("Storage necessary fields are missing");
         }
+        Storage exist = storageMapper.selectById(storage.getId());
+        if (exist == null) {
+            log.error("Storage not found with id {}", storage.getId());
+            throw new BasicRuntimeException("Storage not found");
+        }
+        exist.setName(storage.getName()).setProvider(storage.getProvider()).setEndpoint(storage.getEndpoint())
+                .setBucket(storage.getBucket());
+        storageMapper.updateById(exist);
+    }
+
+    public void updateCredential(Integer id, String accessKey, String secretKey) {
+        Storage storage = storageMapper.selectById(id);
+        if (storage == null) {
+            log.error("Storage not found with id {}", id);
+            throw new BasicRuntimeException("Storage not found");
+        }
+        if (StrUtil.hasBlank(accessKey, secretKey)) {
+            log.error("Storage credential fields are missing for id {}", id);
+            throw new BasicRuntimeException("Storage credential fields are missing");
+        }
+        storage.setAccessKey(accessKey);
+        storage.setSecretKey(secretKey);
         storageMapper.updateById(storage);
     }
 }

@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
-import tech.kp45.bids.bridge.collection.BidsDataset;
-import tech.kp45.bids.bridge.collection.BidsDatasetService;
+import tech.kp45.bids.bridge.collection.dataset.BidsDataset;
+import tech.kp45.bids.bridge.collection.dataset.BidsDatasetService;
 import tech.kp45.bids.bridge.dataset.DatasetProvider;
 import tech.kp45.bids.bridge.dataset.accessor.BidsStorageAccessor;
 
