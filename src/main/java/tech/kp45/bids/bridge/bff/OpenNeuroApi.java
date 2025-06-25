@@ -124,7 +124,12 @@ public class OpenNeuroApi {
             throw new BasicRuntimeException("Dataset DOI is not set.");
         }
 
-        String accessionNumber = DoiUtils.getAccessionNumber(doi);
+        String accessionNumber = doi;
+
+        if (DoiUtils.isValidDoi(doi)) {
+            accessionNumber = DoiUtils.getAccessionNumber(doi);
+        }
+
         if (!StringUtils.hasText(accessionNumber)) {
             log.error("Cannot extract OpenNeuro accession number from DOI: {}", doi);
             throw new BasicRuntimeException("Cannot extract OpenNeuro accession number from DOI");
