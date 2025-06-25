@@ -323,6 +323,12 @@ public class BffApi {
         ArgoSdk argoSdk = new ArgoSdk(argoProperties);
         return argoSdk.workflowTemplateExist(workflowTemplate) ? "UP" : "NOT_FOUND";
     }
+
+    @GetMapping("/api/engines/workflows")
+    public List<String> listArgoWorkflows() {
+        ArgoSdk argoSdk = new ArgoSdk(argoProperties);
+        return argoSdk.listWorkflowTemplate();
+    }
 }
 
 @Data
