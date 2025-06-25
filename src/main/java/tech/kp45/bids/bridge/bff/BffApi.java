@@ -317,6 +317,12 @@ public class BffApi {
         ArgoSdk argoSdk = new ArgoSdk(argoProperties);
         return argoSdk.test() ? "UP" : "DOWN";
     }
+
+    @GetMapping("/api/engines/workflows/{workflow}/deployments")
+    public String getArgoDeployments(@PathVariable(name = "workflow") String workflowTemplate) {
+        ArgoSdk argoSdk = new ArgoSdk(argoProperties);
+        return argoSdk.workflowTemplateExist(workflowTemplate) ? "UP" : "NOT_FOUND";
+    }
 }
 
 @Data
