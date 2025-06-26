@@ -1,5 +1,7 @@
 package tech.kp45.bids.bridge.collection.dataset;
 
+import java.util.Date;
+
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -57,6 +59,24 @@ public class BidsDataset {
 
     @TableField("provider")
     private String provider;
+
+    /**
+     * The date when the dataset was published in the source system.
+     */
+    @TableField("publish_at")
+    private Date publishAt;
+
+    /**
+     * The time when the dataset was created in the source system. not the database record creation time.
+     */
+    @TableField("created_at")
+    private Date createdAt;
+    
+    /**
+     * The time when the dataset was last updated in the source system. not the database record update time.
+     */
+    @TableField("updated_at")
+    private Date updatedAt;
 
     public Dataset toDataset() {
         Dataset dataset = new Dataset();

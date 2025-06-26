@@ -9,6 +9,7 @@ import org.springframework.util.StringUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONArray;
@@ -36,6 +37,13 @@ public class BidsDatasetService {
         queryWrapper.eq(BidsDataset::getProvider, provider).eq(BidsDataset::getName, name).eq(BidsDataset::getVersion,
                 version);
         return bidsDatasetMapper.selectCount(queryWrapper) > 0;
+    }
+
+    public BidsDataset getInTracking(String provider, String name, String version) {
+        LambdaQueryWrapper<BidsDataset> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(BidsDataset::getProvider, provider).eq(BidsDataset::getName, name)
+                .eq(BidsDataset::getVersion, version);
+        return bidsDatasetMapper.selectOne(queryWrapper);
     }
 
     public Page<BidsDataset> listPage(String provider, long page, long size) {
@@ -71,19 +79,22 @@ public class BidsDatasetService {
                     if (StringUtils.hasText(doi) && doi.startsWith("doi:")) {
                         bidsDataset.setDoi(doi.substring(4)); // Remove "doi:" prefix
                     }
-                    boolean exist = exist(bidsDataset.getProvider(), bidsDataset.getName(),
+                    BidsDataset exist = getInTracking(bidsDataset.getProvider(), bidsDataset.getName(),
                             bidsDataset.getVersion());
-                    if (exist) {
-                        continue;
+                    if (exist != null) {
+                        BeanUtil.copyProperties(bidsDataset, exist, "id", "name", "version", "provider");
+                        update(exist);
+                    } else {
+                        create(bidsDataset);
                     }
 
-                    create(bidsDataset);
                 } catch (Exception e) {
                     log.error("Failed to parse dataset: {}", datasets.get(i), e);
                 }
             }
         } else {
-            log.error("Failed to fetch datasets from source: {}. HTTP status: {} and message: {}", trackSource, resp.getStatus(), resp.body());
+            log.error("Failed to fetch datasets from source: {}. HTTP status: {} and message: {}", trackSource,
+                    resp.getStatus(), resp.body());
         }
     }
 
