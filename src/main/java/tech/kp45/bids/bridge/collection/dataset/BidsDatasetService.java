@@ -48,6 +48,7 @@ public class BidsDatasetService {
 
     public Page<BidsDataset> listPage(String provider, long page, long size) {
         LambdaQueryWrapper<BidsDataset> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.orderByDesc(BidsDataset::getPublishAt);
         if (provider != null) {
             queryWrapper.eq(BidsDataset::getProvider, provider);
         }
@@ -101,7 +102,7 @@ public class BidsDatasetService {
     public List<BidsDataset> list(String provider) {
         LambdaQueryWrapper<BidsDataset> queryWrapper = new LambdaQueryWrapper<>();
         if (StringUtils.hasText(provider)) {
-            queryWrapper.eq(BidsDataset::getProvider, provider).orderByDesc(BidsDataset::getId);
+            queryWrapper.eq(BidsDataset::getProvider, provider).orderByDesc(BidsDataset::getPublishAt);
         }
         return bidsDatasetMapper.selectList(queryWrapper);
     }
