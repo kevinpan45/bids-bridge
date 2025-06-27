@@ -4,6 +4,7 @@ import java.util.List;
 
 import tech.kp45.bids.bridge.job.Job;
 import tech.kp45.bids.bridge.job.JobStatus;
+import tech.kp45.bids.bridge.storage.Storage;
 
 public abstract class JobEngine {
     public abstract String submit(Job job);
@@ -43,4 +44,16 @@ public abstract class JobEngine {
      * @return
      */
     public abstract List<String> getPipelines();
+
+    /**
+     * Setup the storage for the job engine to load dataset and upload artifact.
+     * @param storage
+     */
+    public abstract void setupStorage(Storage storage);
+
+    /**
+     * Check if the storage is available for the job engine to load dataset and upload artifact.
+     * @return
+     */
+    public abstract boolean storageAvailable();
 }

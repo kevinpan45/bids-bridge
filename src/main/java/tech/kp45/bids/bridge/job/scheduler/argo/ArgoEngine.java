@@ -15,6 +15,7 @@ import tech.kp45.bids.bridge.job.JobStatus;
 import tech.kp45.bids.bridge.job.scheduler.JobEngine;
 import tech.kp45.bids.bridge.pipeline.Pipeline;
 import tech.kp45.bids.bridge.pipeline.PipelineService;
+import tech.kp45.bids.bridge.storage.Storage;
 
 @Component
 public class ArgoEngine extends JobEngine {
@@ -90,6 +91,18 @@ public class ArgoEngine extends JobEngine {
     @Override
     public List<String> getPipelines() {
         return new ArgoSdk(argoProperties).listWorkflowTemplate();
+    }
+
+    @Override
+    public void setupStorage(Storage storage) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setupStorage'");
+    }
+
+    @Override
+    public boolean storageAvailable() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'storageAvailable'");
     }
 
 }
