@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 
+import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
 import tech.kp45.bids.bridge.bff.JobView;
 import tech.kp45.bids.bridge.common.exception.BasicRuntimeException;
@@ -129,8 +130,11 @@ public class JobService {
         return jobMapper.selectById(id);
     }
 
-    public List<JobView> listJobViews() {
-        return jobMapper.listJobViews();
+    public List<JobView> listJobViews(String group) {
+        if (StrUtil.isBlank(group)) {
+            group = null;
+        }
+        return jobMapper.listJobViews(group);
     }
 
     public Job findByEngineJobId(String engineJobId) {

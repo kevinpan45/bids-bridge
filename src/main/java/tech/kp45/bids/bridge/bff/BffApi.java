@@ -263,8 +263,8 @@ public class BffApi {
     }
 
     @GetMapping("/api/bff/jobs")
-    public List<JobView> listJobViews() {
-        return jobService.listJobViews();
+    public List<JobView> listJobViews(@RequestParam(required = false) String group) {
+        return jobService.listJobViews(group);
     }
 
     @GetMapping("/api/jobs/{id}")
