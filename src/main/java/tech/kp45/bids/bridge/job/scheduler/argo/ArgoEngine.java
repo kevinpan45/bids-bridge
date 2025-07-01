@@ -52,8 +52,8 @@ public class ArgoEngine extends JobEngine {
 
     @Override
     public void delete(String engineJobId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'delete'");
+        ArgoSdk argoSdk = new ArgoSdk(argoProperties);
+        argoSdk.deleteWorkflow(engineJobId);
     }
 
     @Override

@@ -136,4 +136,9 @@ public class ArgoSdk {
         List<String> templates = listWorkflowTemplate();
         return templates.contains(workflow);
     }
+
+    public void deleteWorkflow(String engineJobId) {
+        String url = serverUrl + "/api/v1/workflows/" + namespace + "/" + engineJobId;
+        getClient(url, Method.DELETE).execute();
+    }
 }

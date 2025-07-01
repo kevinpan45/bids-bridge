@@ -66,6 +66,10 @@ public class JobService {
 
     public String schedule(Integer jobId) {
         Job job = jobMapper.selectById(jobId);
+        if (job == null || job.isDeleted()) {
+            log.error("Job {} is deleted and cannot be scheduled", jobId);
+            throw new BasicRuntimeException("Job is deleted and cannot be scheduled.");
+        }
         String engineJobId = jobEngine.submit(job);
 
         job.setEngineJobId(engineJobId);
@@ -78,6 +82,10 @@ public class JobService {
 
     public Job finished(Integer jobId) {
         Job job = jobMapper.selectById(jobId);
+        if (job == null || job.isDeleted()) {
+            log.error("Job {} not found or deleted", jobId);
+            throw new BasicRuntimeException("Job not found or deleted.");
+        }
         job.setStatus(JobStatus.FINISHED.name());
         jobMapper.updateById(job);
         log.info("Job {} finished", jobId);
@@ -86,6 +94,10 @@ public class JobService {
 
     public void manualStop(Integer jobId) {
         Job job = jobMapper.selectById(jobId);
+        if (job == null || job.isDeleted()) {
+            log.error("Job {} not found or deleted", jobId);
+            throw new BasicRuntimeException("Job not found or deleted.");
+        }
         jobEngine.stop(job.getEngineJobId());
 
         job.setStatus(JobStatus.MANUAL_STOPPED.name());
@@ -95,6 +107,10 @@ public class JobService {
 
     public void abnormalStop(Integer jobId) {
         Job job = jobMapper.selectById(jobId);
+        if (job == null || job.isDeleted()) {
+            log.error("Job {} not found or deleted", jobId);
+            throw new BasicRuntimeException("Job not found or deleted.");
+        }
         job.setStatus(JobStatus.ABNORMAL_STOPPED.name());
         jobMapper.updateById(job);
         log.info("Job {} stopped abnormally", jobId);
@@ -102,28 +118,30 @@ public class JobService {
 
     public void delete(Integer jobId) {
         Job job = jobMapper.selectById(jobId);
-        if (JobStatus.RUNNING.name().equals(job.getStatus())) {
-            // Asynchronously stop the running job in engine.
-            new Thread() {
-                @Override
-                public void run() {
-                    jobEngine.stop(job.getEngineJobId());
-                }
-            }.start();
+        if (job == null || job.isDeleted()) {
+            return;
         }
         job.setDeleted(true);
         jobMapper.updateById(job);
         log.info("Job {} deleted", jobId);
+        new Thread() {
+            @Override
+            public void run() {
+                jobEngine.delete(job.getEngineJobId());
+            }
+        }.start();
     }
 
     public List<Job> getRunningJobs() {
         LambdaQueryWrapper<Job> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(Job::getStatus, JobStatus.RUNNING.name());
+        queryWrapper.eq(Job::getStatus, JobStatus.RUNNING.name()).eq(Job::isDeleted, false);
         return jobMapper.selectList(queryWrapper);
     }
 
     public List<Job> list() {
-        return jobMapper.selectList(null);
+        LambdaQueryWrapper<Job> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Job::isDeleted, false).orderByDesc(Job::getCreatedAt);
+        return jobMapper.selectList(queryWrapper);
     }
 
     public Job get(Integer id) {
