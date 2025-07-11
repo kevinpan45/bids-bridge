@@ -60,6 +60,7 @@ spec:
           - "/shared/dataset"
           - "/shared/artifact"
           - "participant"
+          - "--no-sub"
         resources:
           requests:
             cpu: "8"
