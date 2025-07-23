@@ -18,8 +18,12 @@ public class User {
     @TableId(type = IdType.AUTO)
     private Integer id;
 
+    private String uid;
+
     @TableField("username")
     private String username;
+
+    private String email;
 
     @TableField("password")
     private String password;
