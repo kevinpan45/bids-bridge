@@ -20,8 +20,8 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${JWT_ISSUER_URI}
-          jwk-set-uri: ${JWT_JWK_SET_URI}
+          issuer-uri: ${OAUTH2_ISSUER_URI}
+          jwk-set-uri: ${OAUTH2_JWKS_URI}
 
 server:
   port: ${SERVER_PORT:8080}

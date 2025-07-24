@@ -25,6 +25,8 @@ public class User {
 
     private String email;
 
+    private String avatarLink;
+
     @TableField("password")
     private String password;
 
