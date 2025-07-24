@@ -16,6 +16,12 @@ spring:
       port: ${REDIS_PORT:6379}
       password: ${REDIS_PASSWORD:}
       username: ${REDIS_USERNAME:default}
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${OAUTH2_ISSUER_URI}
+          jwk-set-uri: ${OAUTH2_JWKS_URI}
 
 server:
   port: ${SERVER_PORT:8080}

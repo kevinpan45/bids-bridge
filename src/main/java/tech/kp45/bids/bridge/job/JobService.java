@@ -13,6 +13,7 @@ import tech.kp45.bids.bridge.bff.JobView;
 import tech.kp45.bids.bridge.common.exception.BasicRuntimeException;
 import tech.kp45.bids.bridge.dataset.Dataset;
 import tech.kp45.bids.bridge.dataset.DatasetService;
+import tech.kp45.bids.bridge.iam.entity.User;
 import tech.kp45.bids.bridge.job.scheduler.JobEngine;
 import tech.kp45.bids.bridge.pipeline.Pipeline;
 import tech.kp45.bids.bridge.pipeline.PipelineService;
@@ -29,7 +30,7 @@ public class JobService {
     @Autowired
     private JobMapper jobMapper;
 
-    public Job create(String name, String group, Integer pipelineId, Integer datasetId) {
+    public Job create(String name, String group, Integer pipelineId, Integer datasetId, User user) {
         Job job = new Job();
         Pipeline pipeline = pipelineService.get(pipelineId);
         if (pipeline == null || pipeline.isDeleted()) {
@@ -42,8 +43,7 @@ public class JobService {
         }
 
         job.setName(name).setGroup(group).setPipelineId(pipelineId).setDatasetId(datasetId);
-        // TODO: Read from JWT in security context
-        job.setCreatedBy("KP45");
+        job.setCreatedBy(user.getEmail());
         jobMapper.insert(job);
 
         log.info("Job {} of group {} with pipeline {} and dataset {} created", job.getName(), job.getGroup(),
@@ -60,7 +60,7 @@ public class JobService {
         return job;
     }
 
-    public Job create(Integer pipelineId, Integer datasetId, List<String> fileRegexes) {
+    public Job create(Integer pipelineId, Integer datasetId, List<String> fileRegexes, User user) {
         throw new UnsupportedOperationException("Not implemented");
     }
 

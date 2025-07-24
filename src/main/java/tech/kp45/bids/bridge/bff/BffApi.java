@@ -8,6 +8,8 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,6 +32,8 @@ import tech.kp45.bids.bridge.common.exception.BasicRuntimeException;
 import tech.kp45.bids.bridge.dataset.Dataset;
 import tech.kp45.bids.bridge.dataset.DatasetService;
 import tech.kp45.bids.bridge.dataset.accessor.provider.MinioBidsAccessor;
+import tech.kp45.bids.bridge.iam.UserUtils;
+import tech.kp45.bids.bridge.iam.entity.User;
 import tech.kp45.bids.bridge.job.Job;
 import tech.kp45.bids.bridge.job.JobService;
 import tech.kp45.bids.bridge.job.artifact.Artifact;
@@ -252,8 +256,9 @@ public class BffApi {
     @PostMapping("/api/jobs")
     public Job createJob(@RequestParam String name, @RequestParam(required = false) String group,
             @RequestParam Integer pipelineId,
-            @RequestParam Integer datasetId) {
-        Job job = jobService.create(name, group, pipelineId, datasetId);
+            @RequestParam Integer datasetId, @AuthenticationPrincipal Jwt jwt) {
+        User user = UserUtils.toUser(jwt);
+        Job job = jobService.create(name, group, pipelineId, datasetId, user);
         log.info("Job {} with pipeline for dataset {} created", job.getId(), job.getPipelineId(), job.getDatasetId());
         return job;
     }
