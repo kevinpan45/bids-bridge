@@ -43,6 +43,11 @@ public class JobService {
         }
 
         job.setName(name).setGroup(group).setPipelineId(pipelineId).setDatasetId(datasetId);
+        if (!user.isEmailVerified()) {
+            log.error("User {} is not email verified, cannot create job", user.getEmail());
+            throw new BasicRuntimeException("User " + user.getEmail()
+                    + " is not email verified, cannot create job, please verify your email first.");
+        }
         job.setCreatedBy(user.getEmail());
         jobMapper.insert(job);
 

@@ -25,6 +25,8 @@ public class User {
 
     private String email;
 
+    private boolean emailVerified = false;
+
     private String avatarLink;
 
     @TableField("password")
