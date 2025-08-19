@@ -264,13 +264,23 @@ public class BffApi {
     }
 
     @GetMapping("/api/jobs")
-    public List<Job> listJobs() {
-        return jobService.list();
+    public List<Job> listJobs(@AuthenticationPrincipal Jwt jwt) {
+        if (jwt == null) {
+            return jobService.list();
+        } else {
+            User user = UserUtils.toUser(jwt);
+            return jobService.listByUser(user.getEmail());
+        }
     }
 
     @GetMapping("/api/bff/jobs")
-    public List<JobView> listJobViews(@RequestParam(required = false) String group) {
-        return jobService.listJobViews(group);
+    public List<JobView> listJobViews(@RequestParam(required = false) String group, @AuthenticationPrincipal Jwt jwt) {
+        if (jwt == null) {
+            return jobService.listViews(group);
+        } else {
+            User user = UserUtils.toUser(jwt);
+            return jobService.listViewsByUser(group, user.getEmail());
+        }
     }
 
     @GetMapping("/api/jobs/{id}")

@@ -11,6 +11,9 @@ import tech.kp45.bids.bridge.bff.JobView;
 public interface JobMapper extends BaseMapper<Job> {
 
     @Select("SELECT j.*, p.`name` AS pipelineName, p.version AS pipelineVersion, d.`name` AS datasetName, d.version AS datasetVersion, d.doi AS datasetDoi FROM job j, pipeline p, dataset d WHERE j.pipeline_id = p.id AND j.dataset_id = d.id AND (#{group} IS NULL OR j.group = #{group}) AND j.deleted = false ORDER BY j.created_at DESC")
-    List<JobView> listJobViews(String group);
+    List<JobView> listViews(String group);
+
+    @Select("SELECT j.*, p.`name` AS pipelineName, p.version AS pipelineVersion, d.`name` AS datasetName, d.version AS datasetVersion, d.doi AS datasetDoi FROM job j, pipeline p, dataset d WHERE j.pipeline_id = p.id AND j.dataset_id = d.id AND j.created_by = #{userEmail} AND (#{group} IS NULL OR j.group = #{group}) AND j.deleted = false ORDER BY j.created_at DESC")
+    List<JobView> listViewsByUser(String group, String userEmail);
 
 }

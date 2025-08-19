@@ -149,15 +149,28 @@ public class JobService {
         return jobMapper.selectList(queryWrapper);
     }
 
+    public List<Job> listByUser(String userEmail) {
+        LambdaQueryWrapper<Job> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Job::getCreatedBy, userEmail).eq(Job::isDeleted, false).orderByDesc(Job::getCreatedAt);
+        return jobMapper.selectList(queryWrapper);
+    }
+
     public Job get(Integer id) {
         return jobMapper.selectById(id);
     }
 
-    public List<JobView> listJobViews(String group) {
+    public List<JobView> listViews(String group) {
         if (StrUtil.isBlank(group)) {
             group = null;
         }
-        return jobMapper.listJobViews(group);
+        return jobMapper.listViews(group);
+    }
+
+    public List<JobView> listViewsByUser(String group, String userEmail) {
+        if (StrUtil.isBlank(userEmail)) {
+            throw new BasicRuntimeException("User email cannot be blank");
+        }
+        return jobMapper.listViewsByUser(group, userEmail);
     }
 
     public Job findByEngineJobId(String engineJobId) {
