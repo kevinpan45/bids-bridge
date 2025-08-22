@@ -19,4 +19,8 @@ public class ArtifactService {
     public void create(Artifact artifact) {
         artifactMapper.insert(artifact);
     }
+
+    public void deleteById(Integer id) {
+        artifactMapper.deleteById(id);
+    }
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 
@@ -14,6 +15,9 @@ import tech.kp45.bids.bridge.common.exception.BasicRuntimeException;
 import tech.kp45.bids.bridge.dataset.Dataset;
 import tech.kp45.bids.bridge.dataset.DatasetService;
 import tech.kp45.bids.bridge.iam.entity.User;
+import tech.kp45.bids.bridge.job.artifact.Artifact;
+import tech.kp45.bids.bridge.job.artifact.ArtifactService;
+import tech.kp45.bids.bridge.job.artifact.ArtifactStatus;
 import tech.kp45.bids.bridge.job.scheduler.JobEngine;
 import tech.kp45.bids.bridge.pipeline.Pipeline;
 import tech.kp45.bids.bridge.pipeline.PipelineService;
@@ -29,6 +33,8 @@ public class JobService {
     private JobEngine jobEngine;
     @Autowired
     private JobMapper jobMapper;
+    @Autowired
+    private ArtifactService artifactService;
 
     public Job create(String name, String group, Integer pipelineId, Integer datasetId, User user) {
         Job job = new Job();
@@ -91,10 +97,57 @@ public class JobService {
             log.error("Job {} not found or deleted", jobId);
             throw new BasicRuntimeException("Job not found or deleted.");
         }
+        
+        // Create artifact for the finished job if it doesn't exist
+        Artifact artifact = createArtifactForJob(job);
+        
+        // Update job status and artifact reference in a single update
         job.setStatus(JobStatus.FINISHED.name());
+        if (artifact != null) {
+            job.setArtifactId(artifact.getId());
+            log.info("Job {} finished and linked to artifact {}", jobId, artifact.getId());
+        } else {
+            log.warn("Job {} finished but artifact creation failed", jobId);
+        }
         jobMapper.updateById(job);
+        
         log.info("Job {} finished", jobId);
         return job;
+    }
+
+    private Artifact createArtifactForJob(Job job) {
+        try {
+            // Check if artifact already exists for this job
+            Artifact existingArtifact = artifactService.findByJob(job.getId());
+            if (existingArtifact != null) {
+                log.debug("Artifact already exists for job {}", job.getId());
+                artifactService.deleteById(existingArtifact.getId());
+                log.info("Deleted existing artifact for job {}", job.getId());
+            }
+
+            Artifact artifact = new Artifact();
+            artifact.setJobId(job.getId());
+
+            // Use the engine job ID as the storage path (where job outputs are stored)
+            if (StringUtils.hasText(job.getEngineJobId())) {
+                artifact.setStoragePath(job.getEngineJobId());
+                artifact.setStatus(ArtifactStatus.UPLOADED.name());
+            } else {
+                // Mark artifact as not found status.
+                artifact.setStatus(ArtifactStatus.NOT_FOUND.name());
+            }
+
+            artifactService.create(artifact);
+            log.info("Created artifact for finished job {} with storage path: {}",
+                    job.getId(), artifact.getStoragePath());
+
+            return artifact;
+
+        } catch (Exception e) {
+            log.error("Failed to create artifact for job {}", job.getId(), e);
+            // Don't throw exception here to avoid failing the job completion
+            return null;
+        }
     }
 
     public void manualStop(Integer jobId) {

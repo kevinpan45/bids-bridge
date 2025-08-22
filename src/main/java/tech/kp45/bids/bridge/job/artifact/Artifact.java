@@ -18,6 +18,8 @@ public class Artifact {
     private Integer id;
     @TableField("job_id")
     private Integer jobId;
+    @TableField("status")
+    private String status;
     @TableField("storage_path")
     private String storagePath;
     @TableField("created_at")
