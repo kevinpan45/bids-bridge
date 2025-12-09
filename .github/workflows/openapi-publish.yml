@@ -9,6 +9,8 @@ on:
 jobs:
   generate_java_server_stub:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     container:
       image: ghcr.io/kevinpan45/openapi-generator:latest
 
