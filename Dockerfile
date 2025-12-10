@@ -6,7 +6,7 @@ COPY . /usr/src/app
 
 RUN mvn package -DskipTests
 
-FROM openjdk:21
+FROM eclipse-temurin:21-jdk
 
 COPY --from=builder /usr/src/app/target/bids-bridge-*.jar /usr/app/app.jar
 
